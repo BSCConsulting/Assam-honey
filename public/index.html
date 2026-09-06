@@ -141,6 +141,8 @@
       background: rgba(10, 9, 8, 0.4);
       backdrop-filter: blur(8px);
       transition: all 0.4s ease;
+      display: inline-block;
+      will-change: transform;
     }
     .nav-link:hover {
       border-color: #C5A059;
@@ -199,6 +201,26 @@
       z-index: 0;
     }
 
+    /* Initial Hero Scroll Indicator */
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: rgba(245, 245, 240, 0.5);
+      z-index: 10;
+      pointer-events: none;
+      animation: pulseHint 2s infinite ease-in-out;
+      transition: opacity 0.5s ease;
+    }
+    @keyframes pulseHint {
+      0%, 100% { opacity: 0.3; transform: translate(-50%, 0); }
+      50% { opacity: 0.8; transform: translate(-50%, 6px); }
+    }
+
     /* Hero Text Overlays */
     .hero-overlay {
       position: absolute;
@@ -216,7 +238,7 @@
       position: absolute;
       opacity: 0;
       transition: opacity 0.6s ease, transform 0.6s ease;
-      transform: translateY(10px);
+      transform: translateY(12px);
     }
     .hero-overlay-text.active {
       opacity: 1;
@@ -416,6 +438,8 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
+      transition: transform 0.3s ease;
+      will-change: transform;
     }
     .rail-product-img {
       width: 320px;
@@ -498,6 +522,7 @@
       height: 100%;
       object-fit: cover;
       filter: brightness(0.5);
+      z-index: 1;
     }
     .ritual-card-poster {
       position: absolute;
@@ -507,6 +532,11 @@
       object-fit: cover;
       filter: brightness(0.5);
       z-index: 0;
+      animation: subtlePulse 12s ease-in-out infinite alternate;
+    }
+    @keyframes subtlePulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.05); }
     }
     .ritual-card-content {
       position: relative;
@@ -656,11 +686,12 @@
       border: 1px solid rgba(197, 160, 89, 0.15);
       transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
       cursor: pointer;
+      will-change: transform;
     }
     .grid-product-card:hover {
       transform: translateY(-8px);
       border-color: #C5A059;
-      box-shadow: 0 20px 40px rgba(197, 160, 89, 0.12);
+      box-shadow: 0 20px 40px rgba(197, 160, 89, 0.15);
     }
     .grid-product-img {
       width: 220px;
@@ -692,6 +723,7 @@
       border-radius: 30px;
       text-decoration: none;
       transition: all 0.3s ease;
+      will-change: transform;
     }
     .grid-product-btn:hover {
       background: #C5A059;
@@ -764,6 +796,7 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
+      will-change: transform;
     }
     .newsletter-btn:hover {
       background: #E5C079;
@@ -831,7 +864,7 @@
   <!-- Top Navigation -->
   <nav class="navbar">
     <a href="#" class="nav-brand">ASSAM HONEY</a>
-    <a href="#collection" class="nav-link">SHOP</a>
+    <a href="#collection" class="nav-link magnetic-btn">SHOP</a>
   </nav>
 
   <!-- Right Scroll Progress Bar -->
@@ -844,6 +877,7 @@
     <div class="hero-sticky">
       <div class="hero-poster-fallback"></div>
       <canvas class="hero-canvas" id="hero-canvas"></canvas>
+      <div class="hero-scroll-hint" id="scroll-hint">SCROLL TO DISCOVER</div>
 
       <!-- Hero Text Overlays -->
       <div class="hero-overlay">
@@ -929,7 +963,7 @@
 
         <!-- Panel 2: Litchi -->
         <div class="rail-panel">
-          <div class="rail-product-card">
+          <div class="rail-product-card tilt-card">
             <img src="images/product/assam-honey-litchi.png" alt="Litchi Honey" class="rail-product-img">
             <h3 class="rail-product-name">LITCHI BLOSSOM</h3>
           </div>
@@ -937,7 +971,7 @@
 
         <!-- Panel 3: Mustard -->
         <div class="rail-panel">
-          <div class="rail-product-card">
+          <div class="rail-product-card tilt-card">
             <img src="images/product/assam-honey-mustard.png" alt="Mustard Honey" class="rail-product-img">
             <h3 class="rail-product-name">MUSTARD HARVEST</h3>
           </div>
@@ -945,7 +979,7 @@
 
         <!-- Panel 4: Wild Forest -->
         <div class="rail-panel">
-          <div class="rail-product-card">
+          <div class="rail-product-card tilt-card">
             <img src="images/product/assam-honey-wild.png" alt="Wild Forest Honey" class="rail-product-img">
             <h3 class="rail-product-name">WILD FOREST</h3>
           </div>
@@ -965,7 +999,7 @@
       <!-- Card 1 -->
       <div class="ritual-card">
         <img src="videos/card-drizzle_poster.jpg" alt="Drizzle Poster" class="ritual-card-poster">
-        <video class="ritual-card-video" autoplay loop muted playsinline src="videos/card-drizzle.mp4"></video>
+        <video class="ritual-card-video" autoplay loop muted playsinline src="videos/card-drizzle.mp4" poster="videos/card-drizzle_poster.jpg"></video>
         <div class="ritual-card-content">
           <div class="ritual-num">01</div>
           <div class="ritual-title">DRIZZLE</div>
@@ -976,7 +1010,7 @@
       <!-- Card 2 -->
       <div class="ritual-card">
         <img src="videos/card-dip_poster.jpg" alt="Dip Poster" class="ritual-card-poster">
-        <video class="ritual-card-video" autoplay loop muted playsinline src="videos/card-dip.mp4"></video>
+        <video class="ritual-card-video" autoplay loop muted playsinline src="videos/card-dip.mp4" poster="videos/card-dip_poster.jpg"></video>
         <div class="ritual-card-content">
           <div class="ritual-num">02</div>
           <div class="ritual-title">DIP</div>
@@ -987,7 +1021,7 @@
       <!-- Card 3 -->
       <div class="ritual-card">
         <img src="videos/card-stir_poster.jpg" alt="Stir Poster" class="ritual-card-poster">
-        <video class="ritual-card-video" autoplay loop muted playsinline src="videos/card-stir.mp4"></video>
+        <video class="ritual-card-video" autoplay loop muted playsinline src="videos/card-stir.mp4" poster="videos/card-stir_poster.jpg"></video>
         <div class="ritual-card-content">
           <div class="ritual-num">03</div>
           <div class="ritual-title">STIR</div>
@@ -1032,25 +1066,25 @@
     </div>
     <div class="products-grid">
       
-      <div class="grid-product-card">
+      <div class="grid-product-card tilt-card">
         <img src="images/product/assam-honey-litchi.png" alt="Litchi Honey" class="grid-product-img">
         <h3 class="grid-product-name">LITCHI</h3>
         <p class="grid-product-desc">Light & delicate floral nectar with bright orchard aroma.</p>
-        <a href="#" class="grid-product-btn">Acquire — 250g</a>
+        <a href="#" class="grid-product-btn magnetic-btn">Acquire — 250g</a>
       </div>
 
-      <div class="grid-product-card">
+      <div class="grid-product-card tilt-card">
         <img src="images/product/assam-honey-mustard.png" alt="Mustard Honey" class="grid-product-img">
         <h3 class="grid-product-name">MUSTARD</h3>
         <p class="grid-product-desc">Rich winter amber nectar with warm, velvet texture.</p>
-        <a href="#" class="grid-product-btn">Acquire — 250g</a>
+        <a href="#" class="grid-product-btn magnetic-btn">Acquire — 250g</a>
       </div>
 
-      <div class="grid-product-card">
+      <div class="grid-product-card tilt-card">
         <img src="images/product/assam-honey-wild.png" alt="Wild Forest Honey" class="grid-product-img">
         <h3 class="grid-product-name">WILD FOREST</h3>
         <p class="grid-product-desc">Dark mahogany nectar foraged from deep jungle hives.</p>
-        <a href="#" class="grid-product-btn">Acquire — 250g</a>
+        <a href="#" class="grid-product-btn magnetic-btn">Acquire — 250g</a>
       </div>
 
     </div>
@@ -1064,7 +1098,7 @@
       <p class="newsletter-desc">Subscribe to receive allocation announcements for upcoming small-batch harvests.</p>
       <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Welcome to the Assam Honey ritual.');">
         <input type="email" class="newsletter-input" placeholder="Enter your email address" required>
-        <button type="submit" class="newsletter-btn">Subscribe</button>
+        <button type="submit" class="newsletter-btn magnetic-btn">Subscribe</button>
       </form>
     </div>
   </section>
@@ -1086,13 +1120,7 @@
       smoothTouch: false
     });
 
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(raf);
-
-    // Synchronize Lenis with GSAP ScrollTrigger
+    // Synchronize Lenis with GSAP ScrollTrigger ticker ONLY (no double RAF loop)
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add((time) => {
       lenis.raf(time * 1000);
@@ -1109,7 +1137,6 @@
     const loadedFrameIndices = new Set();
 
     let currentFrameIndex = 1;
-    let lastScrollDirection = 1; // 1 = down, -1 = up
     let lastScrollY = window.scrollY;
 
     const canvas = document.getElementById('hero-canvas');
@@ -1136,8 +1163,22 @@
       };
     }
 
+    // Nearest Loaded Frame Helper (Zero Flicker Guarantee)
+    function getNearestLoadedFrame(targetIdx) {
+      if (frames[targetIdx]) return frames[targetIdx];
+      for (let delta = 1; delta <= 30; delta++) {
+        if (targetIdx - delta >= 1 && frames[targetIdx - delta]) {
+          return frames[targetIdx - delta];
+        }
+        if (targetIdx + delta <= TOTAL_FRAMES && frames[targetIdx + delta]) {
+          return frames[targetIdx + delta];
+        }
+      }
+      return null;
+    }
+
     function renderCanvasFrame(idx) {
-      const img = frames[idx];
+      const img = getNearestLoadedFrame(idx);
       if (!img) return;
 
       const dpr = window.devicePixelRatio || 1;
@@ -1235,6 +1276,7 @@
     const heroTrack = document.getElementById('hero-track');
     const progressFill = document.getElementById('progress-fill');
 
+    const scrollHint = document.getElementById('scroll-hint');
     const text1 = document.getElementById('text-1');
     const text2 = document.getElementById('text-2');
     const text3 = document.getElementById('text-3');
@@ -1251,6 +1293,11 @@
         // Global Progress Bar update
         progressFill.style.height = (progress * 100) + '%';
 
+        // Hide scroll hint once user starts scrolling
+        if (scrollHint) {
+          scrollHint.style.opacity = progress > 0.05 ? '0' : '1';
+        }
+
         // Compute frame index from getBoundingClientRect pinned track progress
         const targetFrameIndex = Math.min(TOTAL_FRAMES, Math.max(1, 1 + Math.round(progress * (TOTAL_FRAMES - 1))));
 
@@ -1263,21 +1310,14 @@
         }
 
         // Text Overlay Opacity Timings per Specification
-        // progress 0.15 - 0.25: Text 1
         text1.classList.toggle('active', progress >= 0.15 && progress <= 0.25);
-
-        // progress 0.35 - 0.45: Text 2
         text2.classList.toggle('active', progress >= 0.35 && progress <= 0.45);
-
-        // progress 0.55 - 0.67: Text 3
         text3.classList.toggle('active', progress >= 0.55 && progress <= 0.67);
-
-        // progress 0.70 - 0.80: Text 4
         text4.classList.toggle('active', progress >= 0.70 && progress <= 0.80);
       }
     });
 
-    // Sticky Product Explainer Observer
+    // Sticky Product Explainer Observer with rootMargin offset for robust mobile/desktop bounds
     const expImages = [
       document.getElementById('exp-img-1'),
       document.getElementById('exp-img-2'),
@@ -1294,7 +1334,7 @@
           });
         }
       });
-    }, { threshold: 0.5 });
+    }, { threshold: 0.3, rootMargin: '-10% 0px -10% 0px' });
 
     expPanels.forEach(panel => explainerObserver.observe(panel));
 
@@ -1309,8 +1349,7 @@
         trigger: railOuter,
         start: 'top top',
         end: 'bottom bottom',
-        scrub: 1,
-        pin: false
+        scrub: 1
       }
     });
 
@@ -1341,6 +1380,34 @@
       y: '15%',
       ease: 'none',
       scrollTrigger: { trigger: '.reverse-columns-section', scrub: true }
+    });
+
+    // Polish Pass 1: Magnetic Buttons Interaction
+    document.querySelectorAll('.magnetic-btn').forEach(btn => {
+      btn.addEventListener('mousemove', (e) => {
+        const rect = btn.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        btn.style.transform = `translate(${x * 0.25}px, ${y * 0.25}px)`;
+      });
+      btn.addEventListener('mouseleave', () => {
+        btn.style.transform = 'translate(0px, 0px)';
+      });
+    });
+
+    // Polish Pass 2: 3D Tilt Cards Interaction
+    document.querySelectorAll('.tilt-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        const rotateX = (-y / (rect.height / 2)) * 6;
+        const rotateY = (x / (rect.width / 2)) * 6;
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px)`;
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+      });
     });
 
     // Refresh ScrollTrigger on complete load
