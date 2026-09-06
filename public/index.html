@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASSAM HONEY — Cinematic Luxury Raw Honey</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Core CDNs: GSAP, ScrollTrigger, Lenis -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+  <style>
+    /* Reset & Base Styles */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      background-color: #0A0908;
+      color: #F5F5F0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: clip; /* Critical: clip instead of hidden so CSS sticky works */
+      width: 100%;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Custom Luxury Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0A0908;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2A2621;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #C5A059;
+    }
+
+    /* Film Grain SVG Overlay */
+    .film-grain {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    }
+
+    /* Preloader Screen */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background-color: #0A0908;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    #preloader.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+    .loader-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      letter-spacing: 6px;
+      font-weight: 300;
+      margin-bottom: 20px;
+      color: #F5F5F0;
+      text-transform: uppercase;
+    }
+    .loader-bar-bg {
+      width: 180px;
+      height: 2px;
+      background: rgba(197, 160, 89, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+    .loader-bar-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 0%;
+      background: #C5A059;
+      transition: width 0.2s ease;
+    }
+
+    /* Top Fixed Navigation */
+    nav.navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 32px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      pointer-events: none;
+    }
+    nav.navbar * {
+      pointer-events: auto;
+    }
+    .nav-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 400;
+      letter-spacing: 4px;
+      color: #F5F5F0;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+    .nav-link {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #F5F5F0;
+      text-decoration: none;
+      padding: 10px 24px;
+      border: 1px solid rgba(197, 160, 89, 0.3);
+      border-radius: 40px;
+      background: rgba(10, 9, 8, 0.4);
+      backdrop-filter: blur(8px);
+      transition: all 0.4s ease;
+    }
+    .nav-link:hover {
+      border-color: #C5A059;
+      background: rgba(197, 160, 89, 0.15);
+      box-shadow: 0 0 15px rgba(197, 160, 89, 0.3);
+    }
+
+    /* Right Vertical Scroll Progress Bar */
+    .scroll-progress-container {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 2px;
+      height: 100vh;
+      background: rgba(197, 160, 89, 0.15);
+      z-index: 100;
+    }
+    .scroll-progress-fill {
+      width: 100%;
+      height: 0%;
+      background: #C5A059;
+      box-shadow: 0 0 8px #C5A059;
+    }
+
+    /* SECTION 1: HERO CANVAS TRACK */
+    .hero-track {
+      position: relative;
+      height: 500vh; /* 5x scroll depth for smooth keyframe scrubbing */
+      width: 100%;
+    }
+    .hero-sticky {
+      position: sticky;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .hero-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+    }
+    .hero-poster-fallback {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('images/hero/image-1-honeycomb-hero.png');
+      background-size: cover;
+      background-position: center;
+      z-index: 0;
+    }
+
+    /* Hero Text Overlays */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 24px;
+    }
+    .hero-overlay-text {
+      position: absolute;
+      opacity: 0;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      transform: translateY(10px);
+    }
+    .hero-overlay-text.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .overlay-title-1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(48px, 8vw, 96px);
+      font-weight: 300;
+      letter-spacing: 8px;
+      color: #F5F5F0;
+      text-transform: uppercase;
+    }
+    .overlay-title-2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(22px, 3.5vw, 36px);
+      font-style: italic;
+      font-weight: 300;
+      color: #EFECE6;
+    }
+    .overlay-title-3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(28px, 5vw, 60px);
+      font-weight: 300;
+      letter-spacing: 6px;
+      color: #F5F5F0;
+      text-transform: uppercase;
+    }
+    .overlay-title-4 {
+      position: absolute;
+      top: 12%;
+      left: 8%;
+      transform: none;
+      text-align: left;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #EFECE6;
+    }
+
+    /* Provenance Stats Bar */
+    .provenance-strip {
+      background: #110F0C;
+      border-top: 1px solid rgba(197, 160, 89, 0.15);
+      border-bottom: 1px solid rgba(197, 160, 89, 0.15);
+      padding: 40px 64px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 32px;
+      text-align: center;
+    }
+    .stat-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 42px;
+      font-weight: 300;
+      color: #F5F5F0;
+    }
+    .stat-label {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #A09A90;
+      margin-top: 4px;
+    }
+
+    /* SECTION 2: STICKY PRODUCT EXPLAINER */
+    .sticky-explainer {
+      position: relative;
+      width: 100%;
+      background: #0A0908;
+      display: flex;
+    }
+    .explainer-left {
+      width: 50%;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 48px;
+    }
+    .explainer-img-wrapper {
+      width: 100%;
+      max-width: 440px;
+      aspect-ratio: 1;
+      position: relative;
+    }
+    .explainer-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      opacity: 0;
+      transition: opacity 0.8s ease, transform 0.8s ease;
+      transform: scale(0.95);
+    }
+    .explainer-img.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .explainer-right {
+      width: 50%;
+    }
+    .explainer-panel {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 12% 0 8%;
+    }
+    .explainer-tag {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #C5A059;
+      margin-bottom: 12px;
+    }
+    .explainer-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 48px;
+      font-weight: 300;
+      color: #F5F5F0;
+      margin-bottom: 16px;
+    }
+    .explainer-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-style: italic;
+      color: #D6D2C8;
+      margin-bottom: 24px;
+      border-left: 2px solid #C5A059;
+      padding-left: 16px;
+    }
+    .explainer-body {
+      font-size: 15px;
+      color: #A09A90;
+      line-height: 1.8;
+      max-width: 480px;
+    }
+
+    /* SECTION 3: HORIZONTAL COLLECTION RAIL */
+    .horizontal-rail-outer {
+      position: relative;
+      height: 400vh; /* 4 panels scroll depth */
+    }
+    .horizontal-rail-sticky {
+      position: sticky;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .horizontal-track {
+      display: flex;
+      width: 400vw;
+      height: 100%;
+      will-change: transform;
+    }
+    .rail-panel {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .rail-panel-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.4);
+    }
+    .rail-intro-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+    .rail-intro-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(40px, 7vw, 84px);
+      font-weight: 300;
+      letter-spacing: 8px;
+      text-transform: uppercase;
+      color: #F5F5F0;
+    }
+    .rail-product-card {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .rail-product-img {
+      width: 320px;
+      height: 320px;
+      object-fit: contain;
+      margin-bottom: 24px;
+      filter: drop-shadow(0 20px 30px rgba(0,0,0,0.8));
+    }
+    .rail-product-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 36px;
+      font-weight: 300;
+      letter-spacing: 4px;
+      color: #F5F5F0;
+    }
+
+    /* Interstitial Lifestyle Accent 1 */
+    .lifestyle-accent-strip {
+      padding: 80px 24px;
+      background: #0A0908;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 48px;
+      border-top: 1px solid rgba(197, 160, 89, 0.1);
+    }
+    .lifestyle-accent-img {
+      width: 280px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid rgba(197, 160, 89, 0.2);
+    }
+    .lifestyle-accent-text {
+      max-width: 400px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-style: italic;
+      color: #D6D2C8;
+    }
+
+    /* SECTION 4: STACKING RITUAL CARDS */
+    .ritual-section {
+      position: relative;
+      background: #0A0908;
+      padding: 120px 0;
+    }
+    .ritual-section-header {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+    .ritual-section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 48px;
+      font-weight: 300;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: #F5F5F0;
+    }
+    .cards-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .ritual-card {
+      position: sticky;
+      top: 120px;
+      height: 70vh;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 60px;
+      border: 1px solid rgba(197, 160, 89, 0.3);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.9);
+      background: #110F0C;
+    }
+    .ritual-card-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.5);
+    }
+    .ritual-card-poster {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.5);
+      z-index: 0;
+    }
+    .ritual-card-content {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      padding: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      background: linear-gradient(to top, rgba(10,9,8,0.95), transparent 70%);
+    }
+    .ritual-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 64px;
+      color: #C5A059;
+      font-weight: 300;
+      line-height: 1;
+    }
+    .ritual-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 38px;
+      font-weight: 300;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #F5F5F0;
+      margin-top: 8px;
+    }
+    .ritual-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-style: italic;
+      color: #EFECE6;
+      margin-top: 12px;
+    }
+
+    /* SECTION 5: PARALLAX BRAND STATEMENT */
+    .parallax-statement {
+      position: relative;
+      height: 90vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .parallax-bg {
+      position: absolute;
+      top: -20%;
+      left: 0;
+      width: 100%;
+      height: 140%;
+      object-fit: cover;
+      filter: brightness(0.35);
+    }
+    .statement-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 800px;
+      padding: 0 24px;
+    }
+    .statement-main {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(36px, 6vw, 64px);
+      font-style: italic;
+      font-weight: 300;
+      line-height: 1.3;
+      color: #F5F5F0;
+      margin-bottom: 24px;
+    }
+    .statement-tag {
+      font-size: 12px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #C5A059;
+    }
+
+    /* SECTION 6: REVERSE COLUMNS */
+    .reverse-columns-section {
+      padding: 140px 64px;
+      background: #0D0B09;
+      position: relative;
+    }
+    .columns-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .column-card {
+      height: 480px;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(197, 160, 89, 0.15);
+    }
+    .column-bg {
+      width: 100%;
+      height: 120%;
+      object-fit: cover;
+      margin-top: -10%;
+      filter: brightness(0.45);
+    }
+    .column-overlay-title {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      font-style: italic;
+      color: #F5F5F0;
+      text-align: center;
+      padding: 24px;
+    }
+
+    /* SECTION 7: PRODUCT COLLECTION GRID */
+    .grid-section {
+      padding: 140px 64px;
+      background: #0A0908;
+    }
+    .grid-header {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+    .grid-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 48px;
+      font-weight: 300;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: #F5F5F0;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .grid-product-card {
+      background: #110F0C;
+      border-radius: 8px;
+      padding: 48px 32px;
+      text-align: center;
+      border: 1px solid rgba(197, 160, 89, 0.15);
+      transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+      cursor: pointer;
+    }
+    .grid-product-card:hover {
+      transform: translateY(-8px);
+      border-color: #C5A059;
+      box-shadow: 0 20px 40px rgba(197, 160, 89, 0.12);
+    }
+    .grid-product-img {
+      width: 220px;
+      height: 220px;
+      object-fit: contain;
+      margin: 0 auto 32px;
+    }
+    .grid-product-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 30px;
+      font-weight: 300;
+      letter-spacing: 2px;
+      color: #F5F5F0;
+      margin-bottom: 12px;
+    }
+    .grid-product-desc {
+      font-size: 14px;
+      color: #A09A90;
+      margin-bottom: 24px;
+    }
+    .grid-product-btn {
+      display: inline-block;
+      padding: 12px 28px;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #F5F5F0;
+      border: 1px solid rgba(197, 160, 89, 0.4);
+      border-radius: 30px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .grid-product-btn:hover {
+      background: #C5A059;
+      color: #0A0908;
+      border-color: #C5A059;
+    }
+
+    /* SECTION 8: NEWSLETTER */
+    .newsletter-section {
+      position: relative;
+      padding: 140px 24px;
+      text-align: center;
+      overflow: hidden;
+    }
+    .newsletter-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.25);
+    }
+    .newsletter-content {
+      position: relative;
+      z-index: 2;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+    .newsletter-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 44px;
+      font-weight: 300;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #F5F5F0;
+      margin-bottom: 16px;
+    }
+    .newsletter-desc {
+      font-size: 15px;
+      color: #D6D2C8;
+      margin-bottom: 36px;
+    }
+    .newsletter-form {
+      display: flex;
+      gap: 12px;
+    }
+    .newsletter-input {
+      flex: 1;
+      padding: 16px 24px;
+      background: rgba(10, 9, 8, 0.8);
+      border: 1px solid rgba(197, 160, 89, 0.3);
+      border-radius: 40px;
+      color: #F5F5F0;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    .newsletter-input:focus {
+      border-color: #C5A059;
+    }
+    .newsletter-btn {
+      padding: 16px 36px;
+      background: #C5A059;
+      color: #0A0908;
+      border: none;
+      border-radius: 40px;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .newsletter-btn:hover {
+      background: #E5C079;
+      box-shadow: 0 0 20px rgba(197, 160, 89, 0.4);
+    }
+
+    /* SECTION 9: FOOTER */
+    footer.footer {
+      padding: 60px 48px;
+      background: #070605;
+      border-top: 1px solid rgba(197, 160, 89, 0.1);
+      text-align: center;
+    }
+    .footer-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: #F5F5F0;
+      margin-bottom: 12px;
+    }
+    .footer-copy {
+      font-size: 12px;
+      color: #706B62;
+      letter-spacing: 1px;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 900px) {
+      .sticky-explainer {
+        flex-direction: column;
+      }
+      .explainer-left, .explainer-right {
+        width: 100%;
+      }
+      .explainer-left {
+        height: 50vh;
+      }
+      .columns-grid {
+        grid-template-columns: 1fr;
+      }
+      .lifestyle-accent-strip {
+        flex-direction: column;
+        text-align: center;
+      }
+      .newsletter-form {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Film Grain Overlay -->
+  <div class="film-grain"></div>
+
+  <!-- Preloader Screen -->
+  <div id="preloader">
+    <div class="loader-title">Assam Honey</div>
+    <div class="loader-bar-bg">
+      <div class="loader-bar-fill" id="loader-fill"></div>
+    </div>
+  </div>
+
+  <!-- Top Navigation -->
+  <nav class="navbar">
+    <a href="#" class="nav-brand">ASSAM HONEY</a>
+    <a href="#collection" class="nav-link">SHOP</a>
+  </nav>
+
+  <!-- Right Scroll Progress Bar -->
+  <div class="scroll-progress-container">
+    <div class="scroll-progress-fill" id="progress-fill"></div>
+  </div>
+
+  <!-- SECTION 1: HERO CANVAS TRACK -->
+  <div class="hero-track" id="hero-track">
+    <div class="hero-sticky">
+      <div class="hero-poster-fallback"></div>
+      <canvas class="hero-canvas" id="hero-canvas"></canvas>
+
+      <!-- Hero Text Overlays -->
+      <div class="hero-overlay">
+        <div class="hero-overlay-text overlay-title-1" id="text-1">ASSAM HONEY</div>
+        <div class="hero-overlay-text overlay-title-2" id="text-2">Raw from the Assam hills.</div>
+        <div class="hero-overlay-text overlay-title-3" id="text-3">LITCHI · MUSTARD · WILD FOREST</div>
+        <div class="hero-overlay-text overlay-title-4" id="text-4">ONE DROP. A THOUSAND BLOSSOMS.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Provenance Stats Bar -->
+  <div class="provenance-strip">
+    <div>
+      <div class="stat-number">100%</div>
+      <div class="stat-label">Raw & Unfiltered</div>
+    </div>
+    <div>
+      <div class="stat-number">1,200m</div>
+      <div class="stat-label">Assam Foothills Altitude</div>
+    </div>
+    <div>
+      <div class="stat-number">Single</div>
+      <div class="stat-label">Botanical Origin</div>
+    </div>
+    <div>
+      <div class="stat-number">Artisanal</div>
+      <div class="stat-label">Harvest Batches</div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: STICKY PRODUCT EXPLAINER -->
+  <section class="sticky-explainer" id="explainer">
+    <div class="explainer-left">
+      <div class="explainer-img-wrapper">
+        <img src="images/product/assam-honey-litchi.png" alt="Litchi Blossom Honey" class="explainer-img active" id="exp-img-1">
+        <img src="images/product/assam-honey-mustard.png" alt="Mustard Blossom Honey" class="explainer-img" id="exp-img-2">
+        <img src="images/product/assam-honey-wild.png" alt="Wild Forest Honey" class="explainer-img" id="exp-img-3">
+      </div>
+    </div>
+    <div class="explainer-right">
+      <div class="explainer-panel" data-index="0">
+        <span class="explainer-tag">Varietal 01</span>
+        <h2 class="explainer-heading">LITCHI</h2>
+        <div class="explainer-quote">"Light, floral, morning-bright."</div>
+        <p class="explainer-body">Litchi-blossom honey harvested in early spring. Delicately aromatic with subtle orchard fruit notes and a golden, translucent radiance.</p>
+      </div>
+      <div class="explainer-panel" data-index="1">
+        <span class="explainer-tag">Varietal 02</span>
+        <h2 class="explainer-heading">MUSTARD</h2>
+        <div class="explainer-quote">"Deep, warm, quietly bold."</div>
+        <p class="explainer-body">Mustard-blossom honey, the classic Assam winter harvest. Rich amber viscosity with warm savory undertones and a velvety finish.</p>
+      </div>
+      <div class="explainer-panel" data-index="2">
+        <span class="explainer-tag">Varietal 03</span>
+        <h2 class="explainer-heading">WILD FOREST</h2>
+        <div class="explainer-quote">"Untamed. Harvested by hand."</div>
+        <p class="explainer-body">Dark wild-forest honey, foraged from ancient jungle hives high in the tea hills. Deep mahogany tones with complex herbal richness.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interstitial Lifestyle Accent 1 -->
+  <div class="lifestyle-accent-strip">
+    <img src="images/lifestyle/lifestyle-honeycomb-macro.png" alt="Raw Honeycomb Texture" class="lifestyle-accent-img">
+    <div class="lifestyle-accent-text">
+      "Every drop holds the silent memory of a thousand wildflowers in bloom across the Brahmaputra valley."
+    </div>
+  </div>
+
+  <!-- SECTION 3: HORIZONTAL COLLECTION RAIL -->
+  <div class="horizontal-rail-outer" id="rail-outer">
+    <div class="horizontal-rail-sticky">
+      <div class="horizontal-track" id="horizontal-track">
+        
+        <!-- Panel 1: Intro -->
+        <div class="rail-panel">
+          <img src="images/backgrounds/bg-apiary-golden-hour.png" alt="Apiary Golden Hour" class="rail-panel-bg">
+          <div class="rail-intro-content">
+            <h2 class="rail-intro-title">THE COLLECTION</h2>
+          </div>
+        </div>
+
+        <!-- Panel 2: Litchi -->
+        <div class="rail-panel">
+          <div class="rail-product-card">
+            <img src="images/product/assam-honey-litchi.png" alt="Litchi Honey" class="rail-product-img">
+            <h3 class="rail-product-name">LITCHI BLOSSOM</h3>
+          </div>
+        </div>
+
+        <!-- Panel 3: Mustard -->
+        <div class="rail-panel">
+          <div class="rail-product-card">
+            <img src="images/product/assam-honey-mustard.png" alt="Mustard Honey" class="rail-product-img">
+            <h3 class="rail-product-name">MUSTARD HARVEST</h3>
+          </div>
+        </div>
+
+        <!-- Panel 4: Wild Forest -->
+        <div class="rail-panel">
+          <div class="rail-product-card">
+            <img src="images/product/assam-honey-wild.png" alt="Wild Forest Honey" class="rail-product-img">
+            <h3 class="rail-product-name">WILD FOREST</h3>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: STACKING RITUAL CARDS -->
+  <section class="ritual-section">
+    <div class="ritual-section-header">
+      <h2 class="ritual-section-title">THE THREE RITUALS</h2>
+    </div>
+    <div class="cards-container">
+      
+      <!-- Card 1 -->
+      <div class="ritual-card">
+        <img src="videos/card-drizzle_poster.jpg" alt="Drizzle Poster" class="ritual-card-poster">
+        <video class="ritual-card-video" autoplay loop muted playsinline src="videos/card-drizzle.mp4"></video>
+        <div class="ritual-card-content">
+          <div class="ritual-num">01</div>
+          <div class="ritual-title">DRIZZLE</div>
+          <div class="ritual-quote">"A ribbon of gold, straight from the comb."</div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="ritual-card">
+        <img src="videos/card-dip_poster.jpg" alt="Dip Poster" class="ritual-card-poster">
+        <video class="ritual-card-video" autoplay loop muted playsinline src="videos/card-dip.mp4"></video>
+        <div class="ritual-card-content">
+          <div class="ritual-num">02</div>
+          <div class="ritual-title">DIP</div>
+          <div class="ritual-quote">"Slow, unhurried, exactly as it should be."</div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="ritual-card">
+        <img src="videos/card-stir_poster.jpg" alt="Stir Poster" class="ritual-card-poster">
+        <video class="ritual-card-video" autoplay loop muted playsinline src="videos/card-stir.mp4"></video>
+        <div class="ritual-card-content">
+          <div class="ritual-num">03</div>
+          <div class="ritual-title">STIR</div>
+          <div class="ritual-quote">"Where the ritual settles into stillness."</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 5: PARALLAX BRAND STATEMENT -->
+  <section class="parallax-statement" id="parallax-sec">
+    <img src="images/backgrounds/bg-forest-twilight.png" alt="Forest Twilight" class="parallax-bg" id="parallax-bg-img">
+    <div class="statement-content">
+      <div class="statement-main">"Nature's own sweetness, untouched."</div>
+      <div class="statement-tag">ASSAM HONEY — SINCE THE FIRST HARVEST</div>
+    </div>
+  </section>
+
+  <!-- SECTION 6: REVERSE COLUMNS -->
+  <section class="reverse-columns-section">
+    <div class="columns-grid">
+      <div class="column-card col-1">
+        <img src="images/backgrounds/bg-apiary-golden-hour.png" alt="Column 1" class="column-bg">
+        <div class="column-overlay-title">Gathered from the wild</div>
+      </div>
+      <div class="column-card col-2">
+        <img src="images/lifestyle/lifestyle-dipper-drizzle.png" alt="Column 2" class="column-bg">
+        <div class="column-overlay-title">Purity unfiltered</div>
+      </div>
+      <div class="column-card col-3">
+        <img src="images/lifestyle/lifestyle-honey-toast.png" alt="Column 3" class="column-bg">
+        <div class="column-overlay-title">Artisanal mastery</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 7: PRODUCT COLLECTION GRID -->
+  <section class="grid-section" id="collection">
+    <div class="grid-header">
+      <h2 class="grid-title">SELECT YOUR VARIETAL</h2>
+    </div>
+    <div class="products-grid">
+      
+      <div class="grid-product-card">
+        <img src="images/product/assam-honey-litchi.png" alt="Litchi Honey" class="grid-product-img">
+        <h3 class="grid-product-name">LITCHI</h3>
+        <p class="grid-product-desc">Light & delicate floral nectar with bright orchard aroma.</p>
+        <a href="#" class="grid-product-btn">Acquire — 250g</a>
+      </div>
+
+      <div class="grid-product-card">
+        <img src="images/product/assam-honey-mustard.png" alt="Mustard Honey" class="grid-product-img">
+        <h3 class="grid-product-name">MUSTARD</h3>
+        <p class="grid-product-desc">Rich winter amber nectar with warm, velvet texture.</p>
+        <a href="#" class="grid-product-btn">Acquire — 250g</a>
+      </div>
+
+      <div class="grid-product-card">
+        <img src="images/product/assam-honey-wild.png" alt="Wild Forest Honey" class="grid-product-img">
+        <h3 class="grid-product-name">WILD FOREST</h3>
+        <p class="grid-product-desc">Dark mahogany nectar foraged from deep jungle hives.</p>
+        <a href="#" class="grid-product-btn">Acquire — 250g</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 8: NEWSLETTER -->
+  <section class="newsletter-section">
+    <img src="images/backgrounds/bg-apiary-golden-hour.png" alt="Newsletter Background" class="newsletter-bg">
+    <div class="newsletter-content">
+      <h2 class="newsletter-title">JOIN THE RITUAL</h2>
+      <p class="newsletter-desc">Subscribe to receive allocation announcements for upcoming small-batch harvests.</p>
+      <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Welcome to the Assam Honey ritual.');">
+        <input type="email" class="newsletter-input" placeholder="Enter your email address" required>
+        <button type="submit" class="newsletter-btn">Subscribe</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- SECTION 9: FOOTER -->
+  <footer class="footer">
+    <div class="footer-brand">ASSAM HONEY</div>
+    <div class="footer-copy">&copy; 2026 ASSAM HONEY CO. ALL RIGHTS RESERVED. CRAFTED WITH DISTINCTION.</div>
+  </footer>
+
+
+  <!-- JAVASCRIPT: ROLL-CACHE HERO CANVAS & GSAP ANIMATIONS -->
+  <script>
+    // Initialize Lenis Smooth Scroll
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      direction: 'vertical',
+      smoothTouch: false
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    // Synchronize Lenis with GSAP ScrollTrigger
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+    gsap.ticker.lagSmoothing(0);
+
+    // Global Constants
+    const TOTAL_FRAMES = 600;
+    const INITIAL_PRELOAD_COUNT = 40;
+    const CACHE_WINDOW = 60;
+    const PREFETCH_COUNT = 15;
+
+    const frames = new Array(TOTAL_FRAMES + 1).fill(null);
+    const loadedFrameIndices = new Set();
+
+    let currentFrameIndex = 1;
+    let lastScrollDirection = 1; // 1 = down, -1 = up
+    let lastScrollY = window.scrollY;
+
+    const canvas = document.getElementById('hero-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function getFramePath(idx) {
+      const paddedStr = String(idx).padStart(4, '0');
+      return `frames/frame_${paddedStr}.jpg`;
+    }
+
+    function loadSingleFrame(idx) {
+      if (idx < 1 || idx > TOTAL_FRAMES || frames[idx]) return;
+
+      const img = new Image();
+      img.src = getFramePath(idx);
+      img.onload = () => {
+        frames[idx] = img;
+        loadedFrameIndices.add(idx);
+
+        // If this is the current active frame, re-draw canvas
+        if (idx === currentFrameIndex) {
+          renderCanvasFrame(idx);
+        }
+      };
+    }
+
+    function renderCanvasFrame(idx) {
+      const img = frames[idx];
+      if (!img) return;
+
+      const dpr = window.devicePixelRatio || 1;
+      const displayW = window.innerWidth;
+      const displayH = window.innerHeight;
+
+      if (canvas.width !== displayW * dpr || canvas.height !== displayH * dpr) {
+        canvas.width = displayW * dpr;
+        canvas.height = displayH * dpr;
+      }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Cover-Fit Calculation
+      const imgAspect = img.width / img.height;
+      const canvasAspect = canvas.width / canvas.height;
+
+      let drawW, drawH, drawX, drawY;
+
+      if (canvasAspect > imgAspect) {
+        drawW = canvas.width;
+        drawH = canvas.width / imgAspect;
+        drawX = 0;
+        drawY = (canvas.height - drawH) / 2;
+      } else {
+        drawH = canvas.height;
+        drawW = canvas.height * imgAspect;
+        drawX = (canvas.width - drawW) / 2;
+        drawY = 0;
+      }
+
+      ctx.drawImage(img, drawX, drawY, drawW, drawH);
+    }
+
+    // Preload initial 40 frames then reveal page
+    let preloadedCount = 0;
+    const loaderFill = document.getElementById('loader-fill');
+    const preloader = document.getElementById('preloader');
+
+    for (let i = 1; i <= INITIAL_PRELOAD_COUNT; i++) {
+      const img = new Image();
+      img.src = getFramePath(i);
+      img.onload = () => {
+        frames[i] = img;
+        loadedFrameIndices.add(i);
+        preloadedCount++;
+        loaderFill.style.width = (preloadedCount / INITIAL_PRELOAD_COUNT * 100) + '%';
+
+        if (i === 1) renderCanvasFrame(1);
+
+        if (preloadedCount >= INITIAL_PRELOAD_COUNT) {
+          setTimeout(() => {
+            preloader.classList.add('hidden');
+          }, 300);
+        }
+      };
+    }
+
+    // Rolling Cache & Prefetch Engine
+    function updateFrameCache(centerIdx, direction) {
+      currentFrameIndex = centerIdx;
+      renderCanvasFrame(centerIdx);
+
+      // Prefetch ahead
+      const prefetchStart = direction > 0 ? centerIdx : centerIdx - PREFETCH_COUNT;
+      const prefetchEnd = direction > 0 ? centerIdx + PREFETCH_COUNT : centerIdx;
+
+      for (let i = prefetchStart; i <= prefetchEnd; i++) {
+        if (i >= 1 && i <= TOTAL_FRAMES) loadSingleFrame(i);
+      }
+
+      // Load surrounding window
+      const windowStart = Math.max(1, centerIdx - CACHE_WINDOW);
+      const windowEnd = Math.min(TOTAL_FRAMES, centerIdx + CACHE_WINDOW);
+
+      for (let i = windowStart; i <= windowEnd; i++) {
+        loadSingleFrame(i);
+      }
+
+      // Garbage Collect frames outside rolling window
+      loadedFrameIndices.forEach((idx) => {
+        if (idx < windowStart || idx > windowEnd) {
+          frames[idx] = null;
+          loadedFrameIndices.delete(idx);
+        }
+      });
+    }
+
+    // Window Resize Handling
+    window.addEventListener('resize', () => {
+      renderCanvasFrame(currentFrameIndex);
+    });
+
+    // GSAP ScrollTrigger for Hero Canvas Sequence & Overlays
+    const heroTrack = document.getElementById('hero-track');
+    const progressFill = document.getElementById('progress-fill');
+
+    const text1 = document.getElementById('text-1');
+    const text2 = document.getElementById('text-2');
+    const text3 = document.getElementById('text-3');
+    const text4 = document.getElementById('text-4');
+
+    ScrollTrigger.create({
+      trigger: heroTrack,
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: 0.1,
+      onUpdate: (self) => {
+        const progress = self.progress;
+
+        // Global Progress Bar update
+        progressFill.style.height = (progress * 100) + '%';
+
+        // Compute frame index from getBoundingClientRect pinned track progress
+        const targetFrameIndex = Math.min(TOTAL_FRAMES, Math.max(1, 1 + Math.round(progress * (TOTAL_FRAMES - 1))));
+
+        const currentY = window.scrollY;
+        const direction = currentY >= lastScrollY ? 1 : -1;
+        lastScrollY = currentY;
+
+        if (targetFrameIndex !== currentFrameIndex) {
+          updateFrameCache(targetFrameIndex, direction);
+        }
+
+        // Text Overlay Opacity Timings per Specification
+        // progress 0.15 - 0.25: Text 1
+        text1.classList.toggle('active', progress >= 0.15 && progress <= 0.25);
+
+        // progress 0.35 - 0.45: Text 2
+        text2.classList.toggle('active', progress >= 0.35 && progress <= 0.45);
+
+        // progress 0.55 - 0.67: Text 3
+        text3.classList.toggle('active', progress >= 0.55 && progress <= 0.67);
+
+        // progress 0.70 - 0.80: Text 4
+        text4.classList.toggle('active', progress >= 0.70 && progress <= 0.80);
+      }
+    });
+
+    // Sticky Product Explainer Observer
+    const expImages = [
+      document.getElementById('exp-img-1'),
+      document.getElementById('exp-img-2'),
+      document.getElementById('exp-img-3')
+    ];
+    const expPanels = document.querySelectorAll('.explainer-panel');
+
+    const explainerObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const idx = parseInt(entry.target.getAttribute('data-index'));
+          expImages.forEach((img, i) => {
+            img.classList.toggle('active', i === idx);
+          });
+        }
+      });
+    }, { threshold: 0.5 });
+
+    expPanels.forEach(panel => explainerObserver.observe(panel));
+
+    // GSAP Pinned Horizontal Rail
+    const railOuter = document.getElementById('rail-outer');
+    const horizontalTrack = document.getElementById('horizontal-track');
+
+    gsap.to(horizontalTrack, {
+      x: '-300vw',
+      ease: 'none',
+      scrollTrigger: {
+        trigger: railOuter,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: 1,
+        pin: false
+      }
+    });
+
+    // Parallax Statement Motion
+    gsap.to('#parallax-bg-img', {
+      y: '20%',
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#parallax-sec',
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: true
+      }
+    });
+
+    // Reverse Columns Vertical Parallax
+    gsap.to('.col-1 .column-bg', {
+      y: '15%',
+      ease: 'none',
+      scrollTrigger: { trigger: '.reverse-columns-section', scrub: true }
+    });
+    gsap.to('.col-2 .column-bg', {
+      y: '-15%',
+      ease: 'none',
+      scrollTrigger: { trigger: '.reverse-columns-section', scrub: true }
+    });
+    gsap.to('.col-3 .column-bg', {
+      y: '15%',
+      ease: 'none',
+      scrollTrigger: { trigger: '.reverse-columns-section', scrub: true }
+    });
+
+    // Refresh ScrollTrigger on complete load
+    window.addEventListener('load', () => {
+      ScrollTrigger.refresh();
+    });
+  </script>
+</body>
+</html>
