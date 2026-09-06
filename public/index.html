@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ASSAM HONEY — Cinematic Luxury Raw Honey</title>
+  <title>ASSAM HONEY — Luxury Botanical Raw Honey</title>
 
-  <!-- Google Fonts -->
+  <!-- Google Fonts: Cormorant Garamond (Serif Display) & Plus Jakarta Sans (Sans-Serif Utility) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Core CDNs: GSAP, ScrollTrigger, Lenis -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -16,7 +16,30 @@
   <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
 
   <style>
-    /* Reset & Base Styles */
+    /* ==========================================================================
+       DESIGN SYSTEM & ACCESSIBILITY TOKENS
+       Strict Two-Font System:
+       - Serif: 'Cormorant Garamond' (Headings, Quotes, Heritage Brand Elements)
+       - Sans-Serif: 'Plus Jakarta Sans' (Body, UI Controls, Buttons, Inputs, Badges)
+       ========================================================================== */
+
+    :root {
+      --bg-dark: #0A0908;
+      --bg-surface: #110F0C;
+      --bg-surface-elevated: #181512;
+      --text-main: #F5F5F0;
+      --text-muted: #A09A90;
+      --text-subtle: #6E685E;
+      --gold-accent: #C5A059;
+      --gold-accent-hover: #E5C079;
+      --gold-glow: rgba(197, 160, 89, 0.35);
+      --border-subtle: rgba(197, 160, 89, 0.15);
+      --border-medium: rgba(197, 160, 89, 0.35);
+
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    }
+
     *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
@@ -24,13 +47,26 @@
     }
 
     html, body {
-      background-color: #0A0908;
-      color: #F5F5F0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
       overflow-x: clip; /* Critical: clip instead of hidden so CSS sticky works */
       width: 100%;
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+    }
+
+    /* Screen reader only utility class */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
 
     /* Custom Luxury Scrollbar */
@@ -38,14 +74,14 @@
       width: 6px;
     }
     ::-webkit-scrollbar-track {
-      background: #0A0908;
+      background: var(--bg-dark);
     }
     ::-webkit-scrollbar-thumb {
       background: #2A2621;
       border-radius: 3px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: #C5A059;
+      background: var(--gold-accent);
     }
 
     /* Film Grain SVG Overlay */
@@ -65,7 +101,7 @@
     #preloader {
       position: fixed;
       inset: 0;
-      background-color: #0A0908;
+      background-color: var(--bg-dark);
       z-index: 1000;
       display: flex;
       flex-direction: column;
@@ -78,12 +114,12 @@
       visibility: hidden;
     }
     .loader-title {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: var(--font-serif);
       font-size: 28px;
       letter-spacing: 6px;
       font-weight: 300;
       margin-bottom: 20px;
-      color: #F5F5F0;
+      color: var(--text-main);
       text-transform: uppercase;
     }
     .loader-bar-bg {
@@ -99,55 +135,104 @@
       top: 0;
       bottom: 0;
       width: 0%;
-      background: #C5A059;
+      background: var(--gold-accent);
       transition: width 0.2s ease;
     }
 
-    /* Top Fixed Navigation */
+    /* PHASE 1: PERSISTENT STICKY NAVIGATION HEADER */
     nav.navbar {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
-      padding: 32px 48px;
+      padding: 18px 48px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       z-index: 100;
-      pointer-events: none;
-    }
-    nav.navbar * {
-      pointer-events: auto;
+      background: rgba(10, 9, 8, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
     }
     .nav-brand {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 20px;
+      font-family: var(--font-serif);
+      font-size: 22px;
       font-weight: 400;
       letter-spacing: 4px;
-      color: #F5F5F0;
+      color: var(--text-main);
       text-decoration: none;
       text-transform: uppercase;
+    }
+    .nav-links-menu {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
     }
     .nav-link {
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-family: var(--font-sans);
       font-size: 11px;
-      letter-spacing: 3px;
+      font-weight: 500;
+      letter-spacing: 2.5px;
       text-transform: uppercase;
-      color: #F5F5F0;
+      color: var(--text-main);
       text-decoration: none;
-      padding: 10px 24px;
-      border: 1px solid rgba(197, 160, 89, 0.3);
-      border-radius: 40px;
-      background: rgba(10, 9, 8, 0.4);
-      backdrop-filter: blur(8px);
-      transition: all 0.4s ease;
-      display: inline-block;
-      will-change: transform;
+      transition: color 0.3s ease;
+      position: relative;
+      padding: 4px 0;
     }
-    .nav-link:hover {
-      border-color: #C5A059;
-      background: rgba(197, 160, 89, 0.15);
-      box-shadow: 0 0 15px rgba(197, 160, 89, 0.3);
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0%;
+      height: 1px;
+      background-color: var(--gold-accent);
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after,
+    .nav-link:focus-visible::after {
+      width: 100%;
+    }
+    .nav-link:hover,
+    .nav-link:focus-visible {
+      color: var(--gold-accent-hover);
+      outline: none;
+    }
+    
+    .nav-cart-btn {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-main);
+      background: rgba(197, 160, 89, 0.1);
+      border: 1px solid var(--border-medium);
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+    .nav-cart-btn:hover,
+    .nav-cart-btn:focus-visible {
+      border-color: var(--gold-accent);
+      background: rgba(197, 160, 89, 0.2);
+      box-shadow: 0 0 15px var(--gold-glow);
+      outline: none;
+    }
+    .cart-badge {
+      background: var(--gold-accent);
+      color: var(--bg-dark);
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 10px;
+      padding: 2px 7px;
     }
 
     /* Right Vertical Scroll Progress Bar */
@@ -163,11 +248,11 @@
     .scroll-progress-fill {
       width: 100%;
       height: 0%;
-      background: #C5A059;
-      box-shadow: 0 0 8px #C5A059;
+      background: var(--gold-accent);
+      box-shadow: 0 0 8px var(--gold-accent);
     }
 
-    /* SECTION 1: HERO CANVAS TRACK */
+    /* PHASE 1: HERO CANVAS TRACK & WCAG AAA DARK OVERLAY SCRIM */
     .hero-track {
       position: relative;
       height: 500vh; /* 5x scroll depth for smooth keyframe scrubbing */
@@ -201,24 +286,16 @@
       z-index: 0;
     }
 
-    /* Initial Hero Scroll Indicator */
-    .hero-scroll-hint {
+    /* Dark Scrim Gradient Overlay for WCAG AAA Text Contrast */
+    .hero-scrim-bottom {
       position: absolute;
-      bottom: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 10px;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: rgba(245, 245, 240, 0.5);
-      z-index: 10;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 35%;
+      background: linear-gradient(to top, #0A0908 0%, rgba(10, 9, 8, 0.8) 55%, transparent 100%);
+      z-index: 5;
       pointer-events: none;
-      animation: pulseHint 2s infinite ease-in-out;
-      transition: opacity 0.5s ease;
-    }
-    @keyframes pulseHint {
-      0%, 100% { opacity: 0.3; transform: translate(-50%, 0); }
-      50% { opacity: 0.8; transform: translate(-50%, 6px); }
     }
 
     /* Hero Text Overlays */
@@ -246,141 +323,287 @@
     }
 
     .overlay-title-1 {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: var(--font-serif);
       font-size: clamp(48px, 8vw, 96px);
       font-weight: 300;
       letter-spacing: 8px;
-      color: #F5F5F0;
+      color: var(--text-main);
       text-transform: uppercase;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.8);
     }
     .overlay-title-2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(22px, 3.5vw, 36px);
+      font-family: var(--font-serif);
+      font-size: clamp(22px, 3.5vw, 38px);
       font-style: italic;
       font-weight: 300;
       color: #EFECE6;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.8);
     }
     .overlay-title-3 {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: var(--font-serif);
       font-size: clamp(28px, 5vw, 60px);
       font-weight: 300;
       letter-spacing: 6px;
-      color: #F5F5F0;
+      color: var(--text-main);
       text-transform: uppercase;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.8);
     }
     .overlay-title-4 {
       position: absolute;
-      top: 12%;
+      bottom: 60px;
       left: 8%;
       transform: none;
       text-align: left;
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-family: var(--font-sans);
       font-size: 12px;
+      font-weight: 600;
       letter-spacing: 4px;
       text-transform: uppercase;
-      color: #EFECE6;
+      color: var(--text-main);
+      text-shadow: 0 2px 8px rgba(0,0,0,0.9);
+    }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 40px;
+      right: 8%;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold-accent);
+      z-index: 10;
+      pointer-events: none;
+      animation: pulseHint 2s infinite ease-in-out;
+      transition: opacity 0.5s ease;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.9);
+    }
+    @keyframes pulseHint {
+      0%, 100% { opacity: 0.4; transform: translateY(0); }
+      50% { opacity: 1; transform: translateY(4px); }
     }
 
     /* Provenance Stats Bar */
     .provenance-strip {
-      background: #110F0C;
-      border-top: 1px solid rgba(197, 160, 89, 0.15);
-      border-bottom: 1px solid rgba(197, 160, 89, 0.15);
-      padding: 40px 64px;
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 48px 64px;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 32px;
       text-align: center;
     }
     .stat-number {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 42px;
+      font-family: var(--font-serif);
+      font-size: 44px;
       font-weight: 300;
-      color: #F5F5F0;
+      color: var(--text-main);
     }
     .stat-label {
+      font-family: var(--font-sans);
       font-size: 11px;
+      font-weight: 500;
       letter-spacing: 2px;
       text-transform: uppercase;
-      color: #A09A90;
+      color: var(--text-muted);
       margin-top: 4px;
     }
 
-    /* SECTION 2: STICKY PRODUCT EXPLAINER */
-    .sticky-explainer {
-      position: relative;
-      width: 100%;
-      background: #0A0908;
+    /* STORY SECTION */
+    .story-section {
+      padding: 120px 64px;
+      background: var(--bg-dark);
+      text-align: center;
+    }
+    .story-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .section-tag {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold-accent);
+      margin-bottom: 16px;
+      display: block;
+    }
+    .section-heading {
+      font-family: var(--font-serif);
+      font-size: clamp(36px, 5vw, 54px);
+      font-weight: 300;
+      color: var(--text-main);
+      margin-bottom: 24px;
+      line-height: 1.2;
+    }
+    .story-body {
+      font-family: var(--font-sans);
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.9;
+    }
+
+    /* PHASE 3: UNIFIED PRODUCT MATRIX & CONVERSION PATH */
+    .product-matrix-section {
+      padding: 120px 64px;
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-subtle);
+    }
+    .matrix-header {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto 60px;
+    }
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 40px;
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+    .matrix-card {
+      background: var(--bg-surface-elevated);
+      border-radius: 12px;
+      padding: 40px 32px;
+      border: 1px solid var(--border-subtle);
       display: flex;
-    }
-    .explainer-left {
-      width: 50%;
-      height: 100vh;
-      position: sticky;
-      top: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 48px;
-    }
-    .explainer-img-wrapper {
-      width: 100%;
-      max-width: 440px;
-      aspect-ratio: 1;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
       position: relative;
     }
-    .explainer-img {
-      position: absolute;
-      inset: 0;
+    .matrix-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--gold-accent);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 20px rgba(197, 160, 89, 0.1);
+    }
+    .card-top {
+      text-align: center;
+    }
+    .product-image-container {
+      width: 220px;
+      height: 220px;
+      margin: 0 auto 28px;
+      position: relative;
+    }
+    .product-image-container img {
       width: 100%;
       height: 100%;
       object-fit: contain;
-      opacity: 0;
-      transition: opacity 0.8s ease, transform 0.8s ease;
-      transform: scale(0.95);
+      filter: drop-shadow(0 15px 25px rgba(0,0,0,0.7));
     }
-    .explainer-img.active {
-      opacity: 1;
-      transform: scale(1);
+    .product-title {
+      font-family: var(--font-serif);
+      font-size: 32px;
+      font-weight: 400;
+      color: var(--text-main);
+      margin-bottom: 8px;
     }
-    .explainer-right {
-      width: 50%;
-    }
-    .explainer-panel {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 0 12% 0 8%;
-    }
-    .explainer-tag {
-      font-size: 11px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: #C5A059;
-      margin-bottom: 12px;
-    }
-    .explainer-heading {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 48px;
-      font-weight: 300;
-      color: #F5F5F0;
+    .product-subtitle {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      font-style: italic;
+      color: var(--gold-accent);
       margin-bottom: 16px;
     }
-    .explainer-quote {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 22px;
-      font-style: italic;
-      color: #D6D2C8;
+    .product-description {
+      font-family: var(--font-sans);
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.7;
       margin-bottom: 24px;
-      border-left: 2px solid #C5A059;
-      padding-left: 16px;
     }
-    .explainer-body {
-      font-size: 15px;
-      color: #A09A90;
-      line-height: 1.8;
-      max-width: 480px;
+
+    /* Minimalist Trust Signals Grid */
+    .trust-signals-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+    .trust-tag {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .card-bottom {
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .product-price {
+      font-family: var(--font-sans);
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .product-price-sub {
+      font-size: 11px;
+      color: var(--text-subtle);
+      display: block;
+      font-weight: 400;
+    }
+    .acquire-btn {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--bg-dark);
+      background: var(--gold-accent);
+      border: none;
+      padding: 14px 28px;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .acquire-btn:hover,
+    .acquire-btn:focus-visible {
+      background: var(--gold-accent-hover);
+      box-shadow: 0 0 20px var(--gold-glow);
+      transform: translateY(-2px);
+      outline: none;
+    }
+
+    /* INTERSTITIAL VISUAL BREAK */
+    .lifestyle-break {
+      padding: 80px 24px;
+      background: var(--bg-dark);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 48px;
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .lifestyle-break-img {
+      width: 260px;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid var(--border-subtle);
+    }
+    .lifestyle-break-quote {
+      max-width: 440px;
+      font-family: var(--font-serif);
+      font-size: 26px;
+      font-style: italic;
+      color: #EFECE6;
+      line-height: 1.4;
     }
 
     /* SECTION 3: HORIZONTAL COLLECTION RAIL */
@@ -424,12 +647,12 @@
       text-align: center;
     }
     .rail-intro-title {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: var(--font-serif);
       font-size: clamp(40px, 7vw, 84px);
       font-weight: 300;
       letter-spacing: 8px;
       text-transform: uppercase;
-      color: #F5F5F0;
+      color: var(--text-main);
     }
     .rail-product-card {
       position: relative;
@@ -438,8 +661,6 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
-      transition: transform 0.3s ease;
-      will-change: transform;
     }
     .rail-product-img {
       width: 320px;
@@ -449,42 +670,17 @@
       filter: drop-shadow(0 20px 30px rgba(0,0,0,0.8));
     }
     .rail-product-name {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: var(--font-serif);
       font-size: 36px;
       font-weight: 300;
       letter-spacing: 4px;
-      color: #F5F5F0;
+      color: var(--text-main);
     }
 
-    /* Interstitial Lifestyle Accent 1 */
-    .lifestyle-accent-strip {
-      padding: 80px 24px;
-      background: #0A0908;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 48px;
-      border-top: 1px solid rgba(197, 160, 89, 0.1);
-    }
-    .lifestyle-accent-img {
-      width: 280px;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 4px;
-      border: 1px solid rgba(197, 160, 89, 0.2);
-    }
-    .lifestyle-accent-text {
-      max-width: 400px;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 24px;
-      font-style: italic;
-      color: #D6D2C8;
-    }
-
-    /* SECTION 4: STACKING RITUAL CARDS */
+    /* SECTION 4: RITUAL CARDS */
     .ritual-section {
       position: relative;
-      background: #0A0908;
+      background: var(--bg-dark);
       padding: 120px 0;
     }
     .ritual-section-header {
@@ -492,12 +688,12 @@
       margin-bottom: 80px;
     }
     .ritual-section-title {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: var(--font-serif);
       font-size: 48px;
       font-weight: 300;
       letter-spacing: 6px;
       text-transform: uppercase;
-      color: #F5F5F0;
+      color: var(--text-main);
     }
     .cards-container {
       max-width: 1000px;
@@ -511,9 +707,9 @@
       border-radius: 12px;
       overflow: hidden;
       margin-bottom: 60px;
-      border: 1px solid rgba(197, 160, 89, 0.3);
+      border: 1px solid var(--border-medium);
       box-shadow: 0 30px 60px rgba(0,0,0,0.9);
-      background: #110F0C;
+      background: var(--bg-surface);
     }
     .ritual-card-video {
       position: absolute;
@@ -532,11 +728,6 @@
       object-fit: cover;
       filter: brightness(0.5);
       z-index: 0;
-      animation: subtlePulse 12s ease-in-out infinite alternate;
-    }
-    @keyframes subtlePulse {
-      0% { transform: scale(1); }
-      100% { transform: scale(1.05); }
     }
     .ritual-card-content {
       position: relative;
@@ -549,23 +740,23 @@
       background: linear-gradient(to top, rgba(10,9,8,0.95), transparent 70%);
     }
     .ritual-num {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: var(--font-serif);
       font-size: 64px;
-      color: #C5A059;
+      color: var(--gold-accent);
       font-weight: 300;
       line-height: 1;
     }
     .ritual-title {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: var(--font-serif);
       font-size: 38px;
       font-weight: 300;
       letter-spacing: 4px;
       text-transform: uppercase;
-      color: #F5F5F0;
+      color: var(--text-main);
       margin-top: 8px;
     }
     .ritual-quote {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: var(--font-serif);
       font-size: 22px;
       font-style: italic;
       color: #EFECE6;
@@ -575,7 +766,7 @@
     /* SECTION 5: PARALLAX BRAND STATEMENT */
     .parallax-statement {
       position: relative;
-      height: 90vh;
+      height: 85vh;
       overflow: hidden;
       display: flex;
       align-items: center;
@@ -594,149 +785,35 @@
       position: relative;
       z-index: 2;
       text-align: center;
-      max-width: 800px;
+      max-width: 840px;
       padding: 0 24px;
     }
     .statement-main {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: var(--font-serif);
       font-size: clamp(36px, 6vw, 64px);
       font-style: italic;
       font-weight: 300;
       line-height: 1.3;
-      color: #F5F5F0;
+      color: var(--text-main);
       margin-bottom: 24px;
     }
     .statement-tag {
-      font-size: 12px;
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 600;
       letter-spacing: 4px;
       text-transform: uppercase;
-      color: #C5A059;
+      color: var(--gold-accent);
     }
 
-    /* SECTION 6: REVERSE COLUMNS */
-    .reverse-columns-section {
-      padding: 140px 64px;
-      background: #0D0B09;
-      position: relative;
-    }
-    .columns-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 40px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    .column-card {
-      height: 480px;
-      border-radius: 8px;
-      overflow: hidden;
-      position: relative;
-      border: 1px solid rgba(197, 160, 89, 0.15);
-    }
-    .column-bg {
-      width: 100%;
-      height: 120%;
-      object-fit: cover;
-      margin-top: -10%;
-      filter: brightness(0.45);
-    }
-    .column-overlay-title {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 32px;
-      font-style: italic;
-      color: #F5F5F0;
-      text-align: center;
-      padding: 24px;
-    }
-
-    /* SECTION 7: PRODUCT COLLECTION GRID */
-    .grid-section {
-      padding: 140px 64px;
-      background: #0A0908;
-    }
-    .grid-header {
-      text-align: center;
-      margin-bottom: 80px;
-    }
-    .grid-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 48px;
-      font-weight: 300;
-      letter-spacing: 6px;
-      text-transform: uppercase;
-      color: #F5F5F0;
-    }
-    .products-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 40px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    .grid-product-card {
-      background: #110F0C;
-      border-radius: 8px;
-      padding: 48px 32px;
-      text-align: center;
-      border: 1px solid rgba(197, 160, 89, 0.15);
-      transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
-      cursor: pointer;
-      will-change: transform;
-    }
-    .grid-product-card:hover {
-      transform: translateY(-8px);
-      border-color: #C5A059;
-      box-shadow: 0 20px 40px rgba(197, 160, 89, 0.15);
-    }
-    .grid-product-img {
-      width: 220px;
-      height: 220px;
-      object-fit: contain;
-      margin: 0 auto 32px;
-    }
-    .grid-product-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 30px;
-      font-weight: 300;
-      letter-spacing: 2px;
-      color: #F5F5F0;
-      margin-bottom: 12px;
-    }
-    .grid-product-desc {
-      font-size: 14px;
-      color: #A09A90;
-      margin-bottom: 24px;
-    }
-    .grid-product-btn {
-      display: inline-block;
-      padding: 12px 28px;
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: #F5F5F0;
-      border: 1px solid rgba(197, 160, 89, 0.4);
-      border-radius: 30px;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      will-change: transform;
-    }
-    .grid-product-btn:hover {
-      background: #C5A059;
-      color: #0A0908;
-      border-color: #C5A059;
-    }
-
-    /* SECTION 8: NEWSLETTER */
+    /* PHASE 4: FORM UI & INPUT POLISH */
     .newsletter-section {
       position: relative;
       padding: 140px 24px;
       text-align: center;
       overflow: hidden;
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-subtle);
     }
     .newsletter-bg {
       position: absolute;
@@ -749,101 +826,257 @@
     .newsletter-content {
       position: relative;
       z-index: 2;
-      max-width: 560px;
+      max-width: 580px;
       margin: 0 auto;
     }
     .newsletter-title {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: var(--font-serif);
       font-size: 44px;
       font-weight: 300;
       letter-spacing: 4px;
       text-transform: uppercase;
-      color: #F5F5F0;
+      color: var(--text-main);
       margin-bottom: 16px;
     }
     .newsletter-desc {
+      font-family: var(--font-sans);
       font-size: 15px;
-      color: #D6D2C8;
-      margin-bottom: 36px;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+      line-height: 1.7;
     }
+
+    /* Polish Form Control UI */
     .newsletter-form {
       display: flex;
-      gap: 12px;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .input-group {
+      position: relative;
+      width: 100%;
     }
     .newsletter-input {
-      flex: 1;
-      padding: 16px 24px;
-      background: rgba(10, 9, 8, 0.8);
-      border: 1px solid rgba(197, 160, 89, 0.3);
+      width: 100%;
+      padding: 18px 24px;
+      background: rgba(10, 9, 8, 0.85);
+      border: 1px solid var(--border-medium);
       border-radius: 40px;
-      color: #F5F5F0;
+      color: var(--text-main);
+      font-family: var(--font-sans);
       font-size: 14px;
       outline: none;
-      transition: border-color 0.3s ease;
+      transition: all 0.3s ease;
     }
-    .newsletter-input:focus {
-      border-color: #C5A059;
+    .newsletter-input::placeholder {
+      color: var(--text-subtle);
     }
-    .newsletter-btn {
-      padding: 16px 36px;
-      background: #C5A059;
-      color: #0A0908;
+    .newsletter-input:hover {
+      border-color: var(--gold-accent);
+    }
+    .newsletter-input:focus,
+    .newsletter-input:focus-visible {
+      border-color: var(--gold-accent);
+      box-shadow: 0 0 0 3px var(--gold-glow);
+      background: rgba(10, 9, 8, 0.95);
+    }
+
+    .newsletter-submit-btn {
+      padding: 18px 36px;
+      background: var(--gold-accent);
+      color: var(--bg-dark);
+      border: none;
+      border-radius: 40px;
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .newsletter-submit-btn:hover,
+    .newsletter-submit-btn:focus-visible {
+      background: var(--gold-accent-hover);
+      box-shadow: 0 0 25px var(--gold-glow);
+      transform: translateY(-2px);
+      outline: none;
+    }
+    .newsletter-submit-btn:active {
+      transform: translateY(0);
+    }
+
+    .form-success-msg {
+      display: none;
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--gold-accent-hover);
+      letter-spacing: 1px;
+    }
+
+    /* SLIDE-OVER CART DRAWER UI */
+    .cart-drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+    .cart-drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .cart-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 100%;
+      max-width: 420px;
+      height: 100vh;
+      background: var(--bg-surface-elevated);
+      border-left: 1px solid var(--border-medium);
+      z-index: 1001;
+      transform: translateX(100%);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      padding: 32px;
+    }
+    .cart-drawer.active {
+      transform: translateX(0);
+    }
+    .cart-drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 20px;
+      margin-bottom: 24px;
+    }
+    .cart-drawer-title {
+      font-family: var(--font-serif);
+      font-size: 24px;
+      letter-spacing: 2px;
+      color: var(--text-main);
+    }
+    .cart-close-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 24px;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+    .cart-close-btn:hover {
+      color: var(--gold-accent);
+    }
+    .cart-items-list {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .cart-item-row {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      background: rgba(0,0,0,0.3);
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-subtle);
+    }
+    .cart-item-img {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+    }
+    .cart-item-info {
+      flex: 1;
+    }
+    .cart-item-name {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      color: var(--text-main);
+    }
+    .cart-item-price {
+      font-size: 13px;
+      color: var(--gold-accent);
+    }
+    .cart-footer {
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 24px;
+      margin-top: 24px;
+    }
+    .cart-total-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 20px;
+    }
+    .checkout-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--gold-accent);
+      color: var(--bg-dark);
       border: none;
       border-radius: 40px;
       font-size: 11px;
-      letter-spacing: 2px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
       text-transform: uppercase;
-      font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
-      will-change: transform;
     }
-    .newsletter-btn:hover {
-      background: #E5C079;
-      box-shadow: 0 0 20px rgba(197, 160, 89, 0.4);
+    .checkout-btn:hover {
+      background: var(--gold-accent-hover);
+      box-shadow: 0 0 20px var(--gold-glow);
     }
 
     /* SECTION 9: FOOTER */
     footer.footer {
       padding: 60px 48px;
       background: #070605;
-      border-top: 1px solid rgba(197, 160, 89, 0.1);
+      border-top: 1px solid var(--border-subtle);
       text-align: center;
     }
     .footer-brand {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: var(--font-serif);
       font-size: 24px;
       letter-spacing: 6px;
       text-transform: uppercase;
-      color: #F5F5F0;
+      color: var(--text-main);
       margin-bottom: 12px;
     }
     .footer-copy {
       font-size: 12px;
-      color: #706B62;
+      color: var(--text-subtle);
       letter-spacing: 1px;
     }
 
     /* Responsive Adjustments */
     @media (max-width: 900px) {
-      .sticky-explainer {
-        flex-direction: column;
+      nav.navbar {
+        padding: 16px 24px;
       }
-      .explainer-left, .explainer-right {
+      .nav-links-menu {
+        display: none; /* Mobile menu drawer toggle */
+      }
+      .product-matrix-section, .story-section, .reverse-columns-section {
+        padding: 80px 24px;
+      }
+      .card-bottom {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .acquire-btn {
         width: 100%;
-      }
-      .explainer-left {
-        height: 50vh;
-      }
-      .columns-grid {
-        grid-template-columns: 1fr;
-      }
-      .lifestyle-accent-strip {
-        flex-direction: column;
         text-align: center;
-      }
-      .newsletter-form {
-        flex-direction: column;
       }
     }
   </style>
@@ -861,10 +1094,18 @@
     </div>
   </div>
 
-  <!-- Top Navigation -->
+  <!-- PHASE 1: PERSISTENT STICKY NAVIGATION HEADER -->
   <nav class="navbar">
     <a href="#" class="nav-brand">ASSAM HONEY</a>
-    <a href="#collection" class="nav-link magnetic-btn">SHOP</a>
+    <ul class="nav-links-menu">
+      <li><a href="#shop" class="nav-link">Shop</a></li>
+      <li><a href="#story" class="nav-link">Our Story</a></li>
+      <li><a href="#rituals" class="nav-link">Rituals</a></li>
+      <li><a href="#traceability" class="nav-link">Traceability</a></li>
+    </ul>
+    <button class="nav-cart-btn" id="open-cart-btn" aria-label="View Shopping Cart">
+      Cart <span class="cart-badge" id="cart-count">0</span>
+    </button>
   </nav>
 
   <!-- Right Scroll Progress Bar -->
@@ -872,11 +1113,15 @@
     <div class="scroll-progress-fill" id="progress-fill"></div>
   </div>
 
-  <!-- SECTION 1: HERO CANVAS TRACK -->
+  <!-- PHASE 1: HERO CANVAS TRACK & WCAG AAA DARK SCRIM -->
   <div class="hero-track" id="hero-track">
     <div class="hero-sticky">
       <div class="hero-poster-fallback"></div>
       <canvas class="hero-canvas" id="hero-canvas"></canvas>
+      
+      <!-- WCAG AAA Contrast Gradient Scrim -->
+      <div class="hero-scrim-bottom"></div>
+      
       <div class="hero-scroll-hint" id="scroll-hint">SCROLL TO DISCOVER</div>
 
       <!-- Hero Text Overlays -->
@@ -890,7 +1135,7 @@
   </div>
 
   <!-- Provenance Stats Bar -->
-  <div class="provenance-strip">
+  <div class="provenance-strip" id="traceability">
     <div>
       <div class="stat-number">100%</div>
       <div class="stat-label">Raw & Unfiltered</div>
@@ -905,46 +1150,120 @@
     </div>
     <div>
       <div class="stat-number">Artisanal</div>
-      <div class="stat-label">Harvest Batches</div>
+      <div class="stat-label">Small Batch Harvest</div>
     </div>
   </div>
 
-  <!-- SECTION 2: STICKY PRODUCT EXPLAINER -->
-  <section class="sticky-explainer" id="explainer">
-    <div class="explainer-left">
-      <div class="explainer-img-wrapper">
-        <img src="images/product/assam-honey-litchi.png" alt="Litchi Blossom Honey" class="explainer-img active" id="exp-img-1">
-        <img src="images/product/assam-honey-mustard.png" alt="Mustard Blossom Honey" class="explainer-img" id="exp-img-2">
-        <img src="images/product/assam-honey-wild.png" alt="Wild Forest Honey" class="explainer-img" id="exp-img-3">
-      </div>
-    </div>
-    <div class="explainer-right">
-      <div class="explainer-panel" data-index="0">
-        <span class="explainer-tag">Varietal 01</span>
-        <h2 class="explainer-heading">LITCHI</h2>
-        <div class="explainer-quote">"Light, floral, morning-bright."</div>
-        <p class="explainer-body">Litchi-blossom honey harvested in early spring. Delicately aromatic with subtle orchard fruit notes and a golden, translucent radiance.</p>
-      </div>
-      <div class="explainer-panel" data-index="1">
-        <span class="explainer-tag">Varietal 02</span>
-        <h2 class="explainer-heading">MUSTARD</h2>
-        <div class="explainer-quote">"Deep, warm, quietly bold."</div>
-        <p class="explainer-body">Mustard-blossom honey, the classic Assam winter harvest. Rich amber viscosity with warm savory undertones and a velvety finish.</p>
-      </div>
-      <div class="explainer-panel" data-index="2">
-        <span class="explainer-tag">Varietal 03</span>
-        <h2 class="explainer-heading">WILD FOREST</h2>
-        <div class="explainer-quote">"Untamed. Harvested by hand."</div>
-        <p class="explainer-body">Dark wild-forest honey, foraged from ancient jungle hives high in the tea hills. Deep mahogany tones with complex herbal richness.</p>
-      </div>
+  <!-- OUR STORY SECTION -->
+  <section class="story-section" id="story">
+    <div class="story-container">
+      <span class="section-tag">HERITAGE & CRAFT</span>
+      <h2 class="section-heading">Harvested from the Untamed Brahmaputra Valley</h2>
+      <p class="story-body">
+        High in the mist-shrouded foothills of Assam, wild honeybees forage across protected litchi orchards, winter mustard blossoms, and ancient jungle canopies. Unheated, unfiltered, and bottled straight from the hive to preserve every living enzyme, complex floral note, and deep amber tone.
+      </p>
     </div>
   </section>
 
-  <!-- Interstitial Lifestyle Accent 1 -->
-  <div class="lifestyle-accent-strip">
-    <img src="images/lifestyle/lifestyle-honeycomb-macro.png" alt="Raw Honeycomb Texture" class="lifestyle-accent-img">
-    <div class="lifestyle-accent-text">
-      "Every drop holds the silent memory of a thousand wildflowers in bloom across the Brahmaputra valley."
+  <!-- PHASE 3: CONSOLIDATED UNIFIED PRODUCT MATRIX & CONVERSION PATH -->
+  <section class="product-matrix-section" id="shop">
+    <div class="matrix-header">
+      <span class="section-tag">THE BOTANICAL MATRIX</span>
+      <h2 class="section-heading">Select Your Single-Origin Varietal</h2>
+      <p class="story-body">Artisanal small-batch raw honey bottled in sustainable heavyweight glass jars.</p>
+    </div>
+
+    <div class="matrix-grid">
+      
+      <!-- Varietal 1: Litchi -->
+      <article class="matrix-card">
+        <div class="card-top">
+          <div class="product-image-container">
+            <img src="images/product/assam-honey-litchi.png" alt="Assam Honey Litchi Blossom">
+          </div>
+          <h3 class="product-title">LITCHI BLOSSOM</h3>
+          <div class="product-subtitle">"Light, floral, morning-bright."</div>
+          <p class="product-description">Early spring harvest from organic litchi groves. Delicately aromatic with bright citrus-fruit notes and a golden, translucent finish.</p>
+          
+          <!-- Trust Signals -->
+          <div class="trust-signals-row">
+            <span class="trust-tag">100% Raw</span>
+            <span class="trust-tag">Single Origin</span>
+            <span class="trust-tag">Altitude 1,200m</span>
+          </div>
+        </div>
+
+        <div class="card-bottom">
+          <div>
+            <div class="product-price">₹1,450</div>
+            <span class="product-price-sub">250g Glass Jar</span>
+          </div>
+          <button class="acquire-btn" onclick="addToCart('Litchi Blossom', 1450, 'images/product/assam-honey-litchi.png')">Acquire</button>
+        </div>
+      </article>
+
+      <!-- Varietal 2: Mustard -->
+      <article class="matrix-card">
+        <div class="card-top">
+          <div class="product-image-container">
+            <img src="images/product/assam-honey-mustard.png" alt="Assam Honey Mustard Harvest">
+          </div>
+          <h3 class="product-title">MUSTARD HARVEST</h3>
+          <div class="product-subtitle">"Deep, warm, quietly bold."</div>
+          <p class="product-description">Assam winter harvest from blooming mustard fields. Rich amber viscosity with warm savory undertones and a velvety texture.</p>
+          
+          <!-- Trust Signals -->
+          <div class="trust-signals-row">
+            <span class="trust-tag">Artisanal Batch</span>
+            <span class="trust-tag">Unfiltered</span>
+            <span class="trust-tag">Zero Sugar</span>
+          </div>
+        </div>
+
+        <div class="card-bottom">
+          <div>
+            <div class="product-price">₹1,450</div>
+            <span class="product-price-sub">250g Glass Jar</span>
+          </div>
+          <button class="acquire-btn" onclick="addToCart('Mustard Harvest', 1450, 'images/product/assam-honey-mustard.png')">Acquire</button>
+        </div>
+      </article>
+
+      <!-- Varietal 3: Wild Forest -->
+      <article class="matrix-card">
+        <div class="card-top">
+          <div class="product-image-container">
+            <img src="images/product/assam-honey-wild.png" alt="Assam Honey Wild Forest">
+          </div>
+          <h3 class="product-title">WILD FOREST</h3>
+          <div class="product-subtitle">"Untamed. Harvested by hand."</div>
+          <p class="product-description">Dark wild-forest nectar foraged from ancient jungle hives. Deep mahogany tones with complex medicinal herbal richness.</p>
+          
+          <!-- Trust Signals -->
+          <div class="trust-signals-row">
+            <span class="trust-tag">Wild Foraged</span>
+            <span class="trust-tag">High Enzymes</span>
+            <span class="trust-tag">Jungle Apiary</span>
+          </div>
+        </div>
+
+        <div class="card-bottom">
+          <div>
+            <div class="product-price">₹1,650</div>
+            <span class="product-price-sub">250g Glass Jar</span>
+          </div>
+          <button class="acquire-btn" onclick="addToCart('Wild Forest', 1650, 'images/product/assam-honey-wild.png')">Acquire</button>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- INTERSTITIAL LIFESTYLE ACCENT -->
+  <div class="lifestyle-break">
+    <img src="images/lifestyle/lifestyle-honeycomb-macro.png" alt="Macro Honeycomb Texture" class="lifestyle-break-img">
+    <div class="lifestyle-break-quote">
+      "Every drop holds the silent memory of a thousand wildflowers in bloom across the Assam foothills."
     </div>
   </div>
 
@@ -953,7 +1272,6 @@
     <div class="horizontal-rail-sticky">
       <div class="horizontal-track" id="horizontal-track">
         
-        <!-- Panel 1: Intro -->
         <div class="rail-panel">
           <img src="images/backgrounds/bg-apiary-golden-hour.png" alt="Apiary Golden Hour" class="rail-panel-bg">
           <div class="rail-intro-content">
@@ -961,25 +1279,22 @@
           </div>
         </div>
 
-        <!-- Panel 2: Litchi -->
         <div class="rail-panel">
-          <div class="rail-product-card tilt-card">
+          <div class="rail-product-card">
             <img src="images/product/assam-honey-litchi.png" alt="Litchi Honey" class="rail-product-img">
             <h3 class="rail-product-name">LITCHI BLOSSOM</h3>
           </div>
         </div>
 
-        <!-- Panel 3: Mustard -->
         <div class="rail-panel">
-          <div class="rail-product-card tilt-card">
+          <div class="rail-product-card">
             <img src="images/product/assam-honey-mustard.png" alt="Mustard Honey" class="rail-product-img">
             <h3 class="rail-product-name">MUSTARD HARVEST</h3>
           </div>
         </div>
 
-        <!-- Panel 4: Wild Forest -->
         <div class="rail-panel">
-          <div class="rail-product-card tilt-card">
+          <div class="rail-product-card">
             <img src="images/product/assam-honey-wild.png" alt="Wild Forest Honey" class="rail-product-img">
             <h3 class="rail-product-name">WILD FOREST</h3>
           </div>
@@ -990,13 +1305,13 @@
   </div>
 
   <!-- SECTION 4: STACKING RITUAL CARDS -->
-  <section class="ritual-section">
+  <section class="ritual-section" id="rituals">
     <div class="ritual-section-header">
+      <span class="section-tag">DAILY RITUALS</span>
       <h2 class="ritual-section-title">THE THREE RITUALS</h2>
     </div>
     <div class="cards-container">
       
-      <!-- Card 1 -->
       <div class="ritual-card">
         <img src="videos/card-drizzle_poster.jpg" alt="Drizzle Poster" class="ritual-card-poster">
         <video class="ritual-card-video" autoplay loop muted playsinline src="videos/card-drizzle.mp4" poster="videos/card-drizzle_poster.jpg"></video>
@@ -1007,7 +1322,6 @@
         </div>
       </div>
 
-      <!-- Card 2 -->
       <div class="ritual-card">
         <img src="videos/card-dip_poster.jpg" alt="Dip Poster" class="ritual-card-poster">
         <video class="ritual-card-video" autoplay loop muted playsinline src="videos/card-dip.mp4" poster="videos/card-dip_poster.jpg"></video>
@@ -1018,7 +1332,6 @@
         </div>
       </div>
 
-      <!-- Card 3 -->
       <div class="ritual-card">
         <img src="videos/card-stir_poster.jpg" alt="Stir Poster" class="ritual-card-poster">
         <video class="ritual-card-video" autoplay loop muted playsinline src="videos/card-stir.mp4" poster="videos/card-stir_poster.jpg"></video>
@@ -1033,75 +1346,65 @@
   </section>
 
   <!-- SECTION 5: PARALLAX BRAND STATEMENT -->
-  <section class="parallax-statement" id="parallax-sec">
+  <section class="parallax-statement">
     <img src="images/backgrounds/bg-forest-twilight.png" alt="Forest Twilight" class="parallax-bg" id="parallax-bg-img">
     <div class="statement-content">
       <div class="statement-main">"Nature's own sweetness, untouched."</div>
-      <div class="statement-tag">ASSAM HONEY — SINCE THE FIRST HARVEST</div>
+      <div class="statement-tag">ASSAM HONEY — HARVESTED WITH PURPOSE</div>
     </div>
   </section>
 
-  <!-- SECTION 6: REVERSE COLUMNS -->
-  <section class="reverse-columns-section">
-    <div class="columns-grid">
-      <div class="column-card col-1">
-        <img src="images/backgrounds/bg-apiary-golden-hour.png" alt="Column 1" class="column-bg">
-        <div class="column-overlay-title">Gathered from the wild</div>
-      </div>
-      <div class="column-card col-2">
-        <img src="images/lifestyle/lifestyle-dipper-drizzle.png" alt="Column 2" class="column-bg">
-        <div class="column-overlay-title">Purity unfiltered</div>
-      </div>
-      <div class="column-card col-3">
-        <img src="images/lifestyle/lifestyle-honey-toast.png" alt="Column 3" class="column-bg">
-        <div class="column-overlay-title">Artisanal mastery</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECTION 7: PRODUCT COLLECTION GRID -->
-  <section class="grid-section" id="collection">
-    <div class="grid-header">
-      <h2 class="grid-title">SELECT YOUR VARIETAL</h2>
-    </div>
-    <div class="products-grid">
-      
-      <div class="grid-product-card tilt-card">
-        <img src="images/product/assam-honey-litchi.png" alt="Litchi Honey" class="grid-product-img">
-        <h3 class="grid-product-name">LITCHI</h3>
-        <p class="grid-product-desc">Light & delicate floral nectar with bright orchard aroma.</p>
-        <a href="#" class="grid-product-btn magnetic-btn">Acquire — 250g</a>
-      </div>
-
-      <div class="grid-product-card tilt-card">
-        <img src="images/product/assam-honey-mustard.png" alt="Mustard Honey" class="grid-product-img">
-        <h3 class="grid-product-name">MUSTARD</h3>
-        <p class="grid-product-desc">Rich winter amber nectar with warm, velvet texture.</p>
-        <a href="#" class="grid-product-btn magnetic-btn">Acquire — 250g</a>
-      </div>
-
-      <div class="grid-product-card tilt-card">
-        <img src="images/product/assam-honey-wild.png" alt="Wild Forest Honey" class="grid-product-img">
-        <h3 class="grid-product-name">WILD FOREST</h3>
-        <p class="grid-product-desc">Dark mahogany nectar foraged from deep jungle hives.</p>
-        <a href="#" class="grid-product-btn magnetic-btn">Acquire — 250g</a>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- SECTION 8: NEWSLETTER -->
+  <!-- PHASE 4: FORM UI & ACCESSIBLE INPUT POLISH -->
   <section class="newsletter-section">
-    <img src="images/backgrounds/bg-apiary-golden-hour.png" alt="Newsletter Background" class="newsletter-bg">
+    <img src="images/backgrounds/bg-apiary-golden-hour.png" alt="Apiary Background" class="newsletter-bg">
     <div class="newsletter-content">
+      <span class="section-tag">HARVEST ALLOCATION</span>
       <h2 class="newsletter-title">JOIN THE RITUAL</h2>
-      <p class="newsletter-desc">Subscribe to receive allocation announcements for upcoming small-batch harvests.</p>
-      <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Welcome to the Assam Honey ritual.');">
-        <input type="email" class="newsletter-input" placeholder="Enter your email address" required>
-        <button type="submit" class="newsletter-btn magnetic-btn">Subscribe</button>
+      <p class="newsletter-desc">Subscribe to receive priority allocation announcements for upcoming small-batch harvests.</p>
+      
+      <form class="newsletter-form" id="newsletter-form" onsubmit="handleNewsletterSubmit(event)">
+        <div class="input-group">
+          <label for="newsletter-email" class="sr-only">Email Address</label>
+          <input 
+            type="email" 
+            id="newsletter-email" 
+            class="newsletter-input" 
+            placeholder="Enter your email address..." 
+            required
+            autocomplete="email"
+          >
+        </div>
+        <button type="submit" class="newsletter-submit-btn" id="newsletter-submit-btn">Subscribe</button>
       </form>
+
+      <div class="form-success-msg" id="form-success-msg">
+        ✓ Your allocation request has been registered. Welcome to the ritual.
+      </div>
     </div>
   </section>
+
+  <!-- SLIDE-OVER CART DRAWER UI -->
+  <div class="cart-drawer-overlay" id="cart-overlay" onclick="closeCart()"></div>
+  <div class="cart-drawer" id="cart-drawer">
+    <div class="cart-drawer-header">
+      <h3 class="cart-drawer-title">YOUR SELECTION</h3>
+      <button class="cart-close-btn" onclick="closeCart()" aria-label="Close Cart">&times;</button>
+    </div>
+
+    <div class="cart-items-list" id="cart-items-container">
+      <div style="text-align:center; padding: 40px 0; color: var(--text-subtle);">
+        Your allocation cart is currently empty.
+      </div>
+    </div>
+
+    <div class="cart-footer">
+      <div class="cart-total-row">
+        <span>Subtotal</span>
+        <span id="cart-total-price">₹0</span>
+      </div>
+      <button class="checkout-btn" onclick="alert('Proceeding to secure checkout...')">Proceed to Checkout</button>
+    </div>
+  </div>
 
   <!-- SECTION 9: FOOTER -->
   <footer class="footer">
@@ -1120,7 +1423,7 @@
       smoothTouch: false
     });
 
-    // Synchronize Lenis with GSAP ScrollTrigger ticker ONLY (no double RAF loop)
+    // Synchronize Lenis with GSAP ScrollTrigger ticker ONLY
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add((time) => {
       lenis.raf(time * 1000);
@@ -1156,7 +1459,6 @@
         frames[idx] = img;
         loadedFrameIndices.add(idx);
 
-        // If this is the current active frame, re-draw canvas
         if (idx === currentFrameIndex) {
           renderCanvasFrame(idx);
         }
@@ -1242,7 +1544,6 @@
       currentFrameIndex = centerIdx;
       renderCanvasFrame(centerIdx);
 
-      // Prefetch ahead
       const prefetchStart = direction > 0 ? centerIdx : centerIdx - PREFETCH_COUNT;
       const prefetchEnd = direction > 0 ? centerIdx + PREFETCH_COUNT : centerIdx;
 
@@ -1250,7 +1551,6 @@
         if (i >= 1 && i <= TOTAL_FRAMES) loadSingleFrame(i);
       }
 
-      // Load surrounding window
       const windowStart = Math.max(1, centerIdx - CACHE_WINDOW);
       const windowEnd = Math.min(TOTAL_FRAMES, centerIdx + CACHE_WINDOW);
 
@@ -1258,7 +1558,6 @@
         loadSingleFrame(i);
       }
 
-      // Garbage Collect frames outside rolling window
       loadedFrameIndices.forEach((idx) => {
         if (idx < windowStart || idx > windowEnd) {
           frames[idx] = null;
@@ -1267,7 +1566,6 @@
       });
     }
 
-    // Window Resize Handling
     window.addEventListener('resize', () => {
       renderCanvasFrame(currentFrameIndex);
     });
@@ -1275,8 +1573,8 @@
     // GSAP ScrollTrigger for Hero Canvas Sequence & Overlays
     const heroTrack = document.getElementById('hero-track');
     const progressFill = document.getElementById('progress-fill');
-
     const scrollHint = document.getElementById('scroll-hint');
+
     const text1 = document.getElementById('text-1');
     const text2 = document.getElementById('text-2');
     const text3 = document.getElementById('text-3');
@@ -1289,16 +1587,12 @@
       scrub: 0.1,
       onUpdate: (self) => {
         const progress = self.progress;
-
-        // Global Progress Bar update
         progressFill.style.height = (progress * 100) + '%';
 
-        // Hide scroll hint once user starts scrolling
         if (scrollHint) {
           scrollHint.style.opacity = progress > 0.05 ? '0' : '1';
         }
 
-        // Compute frame index from getBoundingClientRect pinned track progress
         const targetFrameIndex = Math.min(TOTAL_FRAMES, Math.max(1, 1 + Math.round(progress * (TOTAL_FRAMES - 1))));
 
         const currentY = window.scrollY;
@@ -1309,34 +1603,12 @@
           updateFrameCache(targetFrameIndex, direction);
         }
 
-        // Text Overlay Opacity Timings per Specification
         text1.classList.toggle('active', progress >= 0.15 && progress <= 0.25);
         text2.classList.toggle('active', progress >= 0.35 && progress <= 0.45);
         text3.classList.toggle('active', progress >= 0.55 && progress <= 0.67);
         text4.classList.toggle('active', progress >= 0.70 && progress <= 0.80);
       }
     });
-
-    // Sticky Product Explainer Observer with rootMargin offset for robust mobile/desktop bounds
-    const expImages = [
-      document.getElementById('exp-img-1'),
-      document.getElementById('exp-img-2'),
-      document.getElementById('exp-img-3')
-    ];
-    const expPanels = document.querySelectorAll('.explainer-panel');
-
-    const explainerObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const idx = parseInt(entry.target.getAttribute('data-index'));
-          expImages.forEach((img, i) => {
-            img.classList.toggle('active', i === idx);
-          });
-        }
-      });
-    }, { threshold: 0.3, rootMargin: '-10% 0px -10% 0px' });
-
-    expPanels.forEach(panel => explainerObserver.observe(panel));
 
     // GSAP Pinned Horizontal Rail
     const railOuter = document.getElementById('rail-outer');
@@ -1353,62 +1625,84 @@
       }
     });
 
-    // Parallax Statement Motion
+    // Parallax Motion
     gsap.to('#parallax-bg-img', {
       y: '20%',
       ease: 'none',
       scrollTrigger: {
-        trigger: '#parallax-sec',
+        trigger: '.parallax-statement',
         start: 'top bottom',
         end: 'bottom top',
         scrub: true
       }
     });
 
-    // Reverse Columns Vertical Parallax
-    gsap.to('.col-1 .column-bg', {
-      y: '15%',
-      ease: 'none',
-      scrollTrigger: { trigger: '.reverse-columns-section', scrub: true }
-    });
-    gsap.to('.col-2 .column-bg', {
-      y: '-15%',
-      ease: 'none',
-      scrollTrigger: { trigger: '.reverse-columns-section', scrub: true }
-    });
-    gsap.to('.col-3 .column-bg', {
-      y: '15%',
-      ease: 'none',
-      scrollTrigger: { trigger: '.reverse-columns-section', scrub: true }
-    });
+    // CART STATE & SLIDE-OVER DRAWER LOGIC
+    let cart = [];
 
-    // Polish Pass 1: Magnetic Buttons Interaction
-    document.querySelectorAll('.magnetic-btn').forEach(btn => {
-      btn.addEventListener('mousemove', (e) => {
-        const rect = btn.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
-        btn.style.transform = `translate(${x * 0.25}px, ${y * 0.25}px)`;
-      });
-      btn.addEventListener('mouseleave', () => {
-        btn.style.transform = 'translate(0px, 0px)';
-      });
-    });
+    function addToCart(name, price, imageSrc) {
+      const existing = cart.find(item => item.name === name);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ name, price, imageSrc, qty: 1 });
+      }
+      updateCartUI();
+      openCart();
+    }
 
-    // Polish Pass 2: 3D Tilt Cards Interaction
-    document.querySelectorAll('.tilt-card').forEach(card => {
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
-        const rotateX = (-y / (rect.height / 2)) * 6;
-        const rotateY = (x / (rect.width / 2)) * 6;
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px)`;
-      });
-      card.addEventListener('mouseleave', () => {
-        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
-      });
-    });
+    function updateCartUI() {
+      const totalCount = cart.reduce((sum, item) => sum + item.qty, 0);
+      const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+      document.getElementById('cart-count').textContent = totalCount;
+      document.getElementById('cart-total-price').textContent = `₹${totalPrice.toLocaleString()}`;
+
+      const container = document.getElementById('cart-items-container');
+      if (cart.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding: 40px 0; color: var(--text-subtle);">Your allocation cart is currently empty.</div>`;
+        return;
+      }
+
+      container.innerHTML = cart.map(item => `
+        <div class="cart-item-row">
+          <img src="${item.imageSrc}" alt="${item.name}" class="cart-item-img">
+          <div class="cart-item-info">
+            <div class="cart-item-name">${item.name}</div>
+            <div class="cart-item-price">₹${item.price.toLocaleString()} × ${item.qty}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openCart() {
+      document.getElementById('cart-overlay').classList.add('active');
+      document.getElementById('cart-drawer').classList.add('active');
+    }
+
+    function closeCart() {
+      document.getElementById('cart-overlay').classList.remove('active');
+      document.getElementById('cart-drawer').classList.remove('active');
+    }
+
+    document.getElementById('open-cart-btn').addEventListener('click', openCart);
+
+    // FORM SUBMISSION HANDLER
+    function handleNewsletterSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('newsletter-email');
+      const btn = document.getElementById('newsletter-submit-btn');
+      const msg = document.getElementById('form-success-msg');
+
+      btn.disabled = true;
+      btn.textContent = "Processing...";
+
+      setTimeout(() => {
+        btn.textContent = "Confirmed ✓";
+        msg.style.display = 'block';
+        input.value = '';
+      }, 600);
+    }
 
     // Refresh ScrollTrigger on complete load
     window.addEventListener('load', () => {
