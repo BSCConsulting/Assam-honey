@@ -252,7 +252,7 @@
       box-shadow: 0 0 8px var(--gold-accent);
     }
 
-    /* PHASE 1: HERO CANVAS TRACK & WCAG AAA DARK OVERLAY SCRIM */
+    /* PHASE 1: HERO CANVAS TRACK & ISOLATED STACKING CONTEXTS */
     .hero-track {
       position: relative;
       height: 500vh; /* 5x scroll depth for smooth keyframe scrubbing */
@@ -264,26 +264,31 @@
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-    }
-    .hero-canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: 1;
+      isolation: isolate; /* Create clean, isolated stacking context */
+      background-color: var(--bg-dark);
     }
     .hero-poster-fallback {
       position: absolute;
-      top: 0;
-      left: 0;
+      inset: 0;
       width: 100%;
       height: 100%;
       background-image: url('images/hero/image-1-honeycomb-hero.png');
       background-size: cover;
       background-position: center;
       z-index: 0;
+      opacity: 1 !important;
+      mix-blend-mode: normal !important;
+    }
+    .hero-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 10; /* Higher-level foreground product container */
+      opacity: 1 !important;
+      mix-blend-mode: normal !important;
+      background-color: var(--bg-dark);
     }
 
     /* Dark Scrim Gradient Overlay for WCAG AAA Text Contrast */
@@ -294,15 +299,15 @@
       width: 100%;
       height: 35%;
       background: linear-gradient(to top, #0A0908 0%, rgba(10, 9, 8, 0.8) 55%, transparent 100%);
-      z-index: 5;
+      z-index: 15;
       pointer-events: none;
     }
 
-    /* Hero Text Overlays */
+    /* Hero Text Overlays (Higher Stacking Context Layer) */
     .hero-overlay {
       position: absolute;
       inset: 0;
-      z-index: 10;
+      z-index: 20;
       pointer-events: none;
       display: flex;
       flex-direction: column;
@@ -1492,7 +1497,9 @@
         canvas.height = displayH * dpr;
       }
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Fill canvas background to prevent opacity bleed / double exposure
+      ctx.fillStyle = '#0A0908';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Cover-Fit Calculation
       const imgAspect = img.width / img.height;
