@@ -1011,6 +1011,49 @@
       font-size: 13px;
       color: var(--gold-accent);
     }
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .qty-btn {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .qty-btn:hover {
+      border-color: var(--gold-accent);
+      color: var(--gold-accent);
+      background: rgba(197, 160, 89, 0.15);
+    }
+    .qty-val {
+      font-size: 13px;
+      font-weight: 600;
+      min-width: 16px;
+      text-align: center;
+    }
+    .remove-cart-btn {
+      background: none;
+      border: none;
+      color: var(--text-subtle);
+      font-size: 20px;
+      cursor: pointer;
+      padding: 4px;
+      transition: color 0.2s ease;
+    }
+    .remove-cart-btn:hover {
+      color: #ff6b6b;
+    }
     .cart-footer {
       border-top: 1px solid var(--border-subtle);
       padding-top: 24px;
@@ -1658,6 +1701,21 @@
       openCart();
     }
 
+    function changeQty(name, delta) {
+      const item = cart.find(i => i.name === name);
+      if (!item) return;
+      item.qty += delta;
+      if (item.qty <= 0) {
+        cart = cart.filter(i => i.name !== name);
+      }
+      updateCartUI();
+    }
+
+    function removeFromCart(name) {
+      cart = cart.filter(i => i.name !== name);
+      updateCartUI();
+    }
+
     function updateCartUI() {
       const totalCount = cart.reduce((sum, item) => sum + item.qty, 0);
       const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
@@ -1676,8 +1734,14 @@
           <img src="${item.imageSrc}" alt="${item.name}" class="cart-item-img">
           <div class="cart-item-info">
             <div class="cart-item-name">${item.name}</div>
-            <div class="cart-item-price">₹${item.price.toLocaleString()} × ${item.qty}</div>
+            <div class="cart-item-price">₹${item.price.toLocaleString()}</div>
+            <div class="qty-controls">
+              <button class="qty-btn" onclick="changeQty('${item.name}', -1)" aria-label="Decrease quantity">-</button>
+              <span class="qty-val">${item.qty}</span>
+              <button class="qty-btn" onclick="changeQty('${item.name}', 1)" aria-label="Increase quantity">+</button>
+            </div>
           </div>
+          <button class="remove-cart-btn" onclick="removeFromCart('${item.name}')" aria-label="Remove item">&times;</button>
         </div>
       `).join('');
     }
@@ -1693,6 +1757,20 @@
     }
 
     document.getElementById('open-cart-btn').addEventListener('click', openCart);
+
+    // LENIS SMOOTH SCROLL ANCHOR INTERCEPT
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        const targetId = this.getAttribute('href');
+        if (targetId && targetId !== '#') {
+          const targetEl = document.querySelector(targetId);
+          if (targetEl) {
+            e.preventDefault();
+            lenis.scrollTo(targetEl);
+          }
+        }
+      });
+    });
 
     // FORM SUBMISSION HANDLER
     function handleNewsletterSubmit(e) {
